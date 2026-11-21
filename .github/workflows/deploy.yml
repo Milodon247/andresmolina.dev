@@ -37,6 +37,8 @@ jobs:
       cancel-in-progress: false
     outputs:
       previous-version: ${{ steps.previous.outputs.version }}
+      # Environment variables only reach jobs that declare the environment, so pass the URL on.
+      url: ${{ vars.PRODUCTION_URL }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -99,7 +101,7 @@ jobs:
 
       - name: Run smoke tests against production
         env:
-          BASE_URL: ${{ vars.PRODUCTION_URL }}
+          BASE_URL: ${{ needs.deploy.outputs.url }}
         run: npm run test:smoke
 
       - name: Explain how to roll back

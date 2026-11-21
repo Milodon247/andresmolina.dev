@@ -135,7 +135,9 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
   `http://localhost` assets to https. Production keeps it, enforced by `tests/security`.
 - `linkinator.config.json` skips linkedin.com (HTTP 999 for bots), andresmolina.dev (not live yet)
   and the `github.com/example` profile placeholder (remove once the real GitHub link is in
-  `src/content/profile/profile.json`).
+  `src/content/profile/profile.json`). HTTP 403 is reported as a warning, not a failure: github.com
+  answers 403 to requests from GitHub Actions runners while the page exists. 404s and connection
+  errors still fail the check.
 - `lighthouserc.cjs` uses Playwright's `chrome-headless-shell`: some Windows policies block the
   unsigned full Chromium binary. `CHROME_PATH` overrides it.
 
