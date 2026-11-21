@@ -23,11 +23,15 @@ automation practices, so every change must keep those standards.
 | `npm run build`   | `astro check` + static build into `dist/`      |
 | `npm run preview` | Serve `dist/` locally                          |
 | `npm run check`   | Type-check `.astro` and `.ts` files            |
+| `npm run images`  | Regenerate PNG icons and OG image from SVGs    |
 
 ## Layout
 
 ```
-public/                 static files copied as-is (_headers, .well-known/security.txt, og/)
+astro.config.ts         Astro config (static output, sitemap with hreflang, Tailwind)
+design/                 SVG sources for generated images (OG image)
+scripts/                maintenance scripts (image generation)
+public/                 static files copied as-is (_headers, .well-known/security.txt, icons, og/)
 src/content.config.ts   content collections + Zod schemas
 src/content/            CV data (edit these to update the CV), one folder per collection
 src/i18n/               locales, UI dictionary, route map, helpers
@@ -44,6 +48,8 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 1. **Zero client-side JavaScript.** No `<script>` tags, no `client:*` directives, no View
    Transitions, no prefetch. Interactive needs are solved with HTML/CSS (`<details>`, links).
    If JS ever becomes unavoidable, stop and ask the owner first, with a justification.
+   The only allowed `<script>` is the non-executable `type="application/ld+json"` data block
+   emitted by `src/components/seo/Head.astro` (CSP does not apply to data blocks).
 2. **Nothing inline.** No `<style>` blocks that end up inline, no `style=""` attributes, no inline
    event handlers. `build.inlineStylesheets` stays `'never'`. This is what allows the CSP in
    `public/_headers` to use `style-src 'self'` with no hashes and no `'unsafe-inline'`.
@@ -52,7 +58,9 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 4. **Never relax the CSP** or remove a security header to make something work. Fix the cause.
 5. **Content lives in `src/content/`**, validated by Zod. Components never hard-code CV data.
    Every entry must exist in both `en` and `es`.
-6. **UI strings live in `src/i18n/ui.ts`**, never hard-coded in components.
+6. **UI strings live in `src/i18n/ui.ts`**, never hard-coded in components. New pages need an
+   entry in `src/i18n/routes.ts` (translated slugs) and a thin route file per locale in
+   `src/pages/` that renders a shared component from `src/components/pages/`.
 7. **Accessibility: WCAG 2.2 AA.** Semantic HTML, one `<h1>` per page, visible focus, 24×24 px
    minimum target size, sufficient contrast in both color schemes, `lang` on the document and on
    foreign-language fragments.
