@@ -1,0 +1,18 @@
+---
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+
+/** Link to another site. Opens in the same tab and tells screen-reader users it leaves the site. */
+interface Props {
+  href: string;
+  locale: Locale;
+  class?: string;
+}
+
+const { href, locale, class: className } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<a href={href} rel="noopener noreferrer" class={className}
+  ><slot /><span class="sr-only"> {t.externalLink}</span></a
+>

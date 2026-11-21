@@ -1,0 +1,30 @@
+---
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+import { site } from '@/config/site';
+import type { Locale } from '@/i18n/config';
+import type { PageKey } from '@/i18n/routes';
+import { useTranslations } from '@/i18n/ui';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+interface Props {
+  locale: Locale;
+  page?: PageKey | undefined;
+}
+
+const { locale, page } = Astro.props;
+const t = useTranslations(locale);
+const year = new Date().getUTCFullYear();
+---
+
+<footer class="no-print mt-16 border-t border-border">
+  <div
+    class="mx-auto flex max-w-4xl flex-col gap-4 px-4 py-8 text-sm text-muted md:flex-row md:items-center md:justify-between"
+  >
+    <div class="space-y-1">
+      <p>© {year} {site.author}</p>
+      <p>{t.footer.builtWith}</p>
+      <p><ExternalLink href={site.repoUrl} locale={locale}>{t.footer.source}</ExternalLink></p>
+    </div>
+    <LanguageSwitcher locale={locale} page={page} class="self-start md:self-auto" />
+  </div>
+</footer>

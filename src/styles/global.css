@@ -1,1 +1,125 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+/*
+ * Design tokens. Light values live in @theme; dark values override the same custom properties
+ * under prefers-color-scheme, so every utility (bg-bg, text-muted, …) adapts without JS.
+ * All text/background pairs meet WCAG 2.2 AA (4.5:1) in both schemes.
+ */
+@theme {
+  --font-sans:
+    'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+
+  --color-bg: #ffffff;
+  --color-surface: #f8fafc;
+  --color-fg: #0f172a;
+  --color-muted: #475569;
+  --color-border: #cbd5e1;
+  --color-accent: #0f766e;
+  --color-accent-strong: #115e59;
+  --color-on-accent: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0b1120;
+    --color-surface: #111a2e;
+    --color-fg: #e2e8f0;
+    --color-muted: #94a3b8;
+    --color-border: #334155;
+    --color-accent: #5eead4;
+    --color-accent-strong: #99f6e4;
+    --color-on-accent: #042f2e;
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bg font-sans text-fg antialiased;
+  }
+
+  a {
+    @apply text-accent underline decoration-1 underline-offset-4 hover:text-accent-strong hover:decoration-2;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+}
+
+@layer components {
+  /* Body of Markdown entries (experience highlights, project descriptions). */
+  .cv-prose {
+    @apply leading-relaxed text-fg;
+  }
+  .cv-prose p + p {
+    @apply mt-3;
+  }
+  .cv-prose ul {
+    @apply list-disc space-y-1.5 pl-5 marker:text-muted;
+  }
+  .cv-prose ol {
+    @apply list-decimal space-y-1.5 pl-5;
+  }
+  .cv-prose strong {
+    @apply font-semibold;
+  }
+  .cv-prose code {
+    @apply rounded bg-surface px-1 py-0.5 text-[0.9em];
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Printing the site produces a clean one-column CV. */
+@media print {
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+    --color-fg: #000000;
+    --color-muted: #333333;
+    --color-border: #999999;
+    --color-accent: #000000;
+    --color-accent-strong: #000000;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  main a[href^='http']::after,
+  main a[href^='mailto:']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+    color: var(--color-muted);
+  }
+
+  article,
+  section > ul > li {
+    break-inside: avoid;
+  }
+}

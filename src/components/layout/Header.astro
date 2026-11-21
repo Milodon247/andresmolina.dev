@@ -1,0 +1,46 @@
+---
+import { site } from '@/config/site';
+import type { Locale } from '@/i18n/config';
+import { pageKeys, pathFor, type PageKey } from '@/i18n/routes';
+import { useTranslations } from '@/i18n/ui';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+interface Props {
+  locale: Locale;
+  page?: PageKey | undefined;
+}
+
+const { locale, page } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<header class="border-b border-border">
+  <div
+    class="mx-auto grid max-w-4xl grid-cols-[1fr_auto] items-center gap-x-6 gap-y-3 px-4 py-4 md:grid-cols-[auto_1fr_auto]"
+  >
+    <a href={pathFor('home', locale)} class="text-lg font-semibold tracking-tight text-fg no-underline">
+      {site.name}
+    </a>
+    <nav aria-label={t.mainNavLabel} class="no-print col-span-2 row-start-2 md:col-span-1 md:row-start-1">
+      <ul class="flex flex-wrap gap-x-5 gap-y-1 md:justify-end">
+        {
+          pageKeys.map((key) => (
+            <li>
+              <a
+                href={pathFor(key, locale)}
+                aria-current={key === page ? 'page' : undefined}
+                class:list={[
+                  'inline-flex min-h-11 items-center text-sm font-medium no-underline hover:underline',
+                  key === page ? 'text-accent underline decoration-2' : 'text-muted hover:text-fg',
+                ]}
+              >
+                {t.nav[key]}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <LanguageSwitcher locale={locale} page={page} class="no-print justify-self-end" />
+  </div>
+</header>
