@@ -21,7 +21,9 @@
     "test:unit": "vitest run --project unit",
     "test:dist": "vitest run --project dist",
     "test:e2e": "playwright test --grep-invert @a11y",
-    "test:a11y": "playwright test --grep @a11y"
+    "test:a11y": "playwright test --grep @a11y",
+    "test:html": "html-validate \"dist/**/*.html\"",
+    "test:links": "linkinator dist --verbosity error"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.6",
@@ -40,6 +42,8 @@
     "eslint-plugin-astro": "3.2.1",
     "eslint-plugin-jsx-a11y-x": "0.2.0",
     "globals": "17.14.0",
+    "html-validate": "11.21.1",
+    "linkinator": "8.1.0",
     "prettier": "3.10.1",
     "prettier-plugin-astro": "1.1.2",
     "prettier-plugin-tailwindcss": "0.8.1",
@@ -50,6 +54,9 @@
   "overrides": {
     "eslint-plugin-jsx-a11y-x": {
       "minimatch": "11.0.9"
+    },
+    "linkinator": {
+      "glob": "14.0.6"
     }
   }
 }
