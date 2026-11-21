@@ -1,0 +1,34 @@
+[
+  {
+    "id": "cissp",
+    "name": "Certified Information Systems Security Professional",
+    "acronym": "CISSP",
+    "issuer": "ISC2",
+    "issued": "2023-06",
+    "expires": "2026-06",
+    "credentialId": "000000",
+    "verifyUrl": "https://www.isc2.org/MemberVerification"
+  },
+  {
+    "id": "example-cloud-security",
+    "name": "Example Cloud Security Certification",
+    "issuer": "Example Cloud Provider",
+    "issued": "2022-09",
+    "expires": "2025-09",
+    "credentialId": "EXAMPLE-123"
+  },
+  {
+    "id": "example-kubernetes-security",
+    "name": "Example Kubernetes Security Specialist",
+    "acronym": "EKSS",
+    "issuer": "Example Foundation",
+    "issued": "2021-11",
+    "expires": "2023-11"
+  },
+  {
+    "id": "example-devops-foundation",
+    "name": "Example DevOps Foundation",
+    "issuer": "Example Institute",
+    "issued": "2020-04"
+  }
+]

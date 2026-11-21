@@ -1,0 +1,26 @@
+[
+  {
+    "id": "security",
+    "order": 1,
+    "name": { "en": "Security", "es": "Seguridad" },
+    "items": ["Threat modeling", "SAST / DAST / SCA", "Supply-chain security (SLSA, SBOM)", "Secrets management", "Zero Trust"]
+  },
+  {
+    "id": "cloud-platform",
+    "order": 2,
+    "name": { "en": "Cloud & platform", "es": "Cloud y plataforma" },
+    "items": ["Kubernetes", "Terraform", "Cloud landing zones", "Policy as code (OPA)", "Observability"]
+  },
+  {
+    "id": "delivery",
+    "order": 3,
+    "name": { "en": "Delivery", "es": "Entrega" },
+    "items": ["CI/CD pipelines", "GitHub Actions", "GitOps", "Release automation"]
+  },
+  {
+    "id": "governance",
+    "order": 4,
+    "name": { "en": "Governance", "es": "Gobierno" },
+    "items": ["Risk management", "ISO 27001", "Security architecture reviews", "Secure SDLC"]
+  }
+]

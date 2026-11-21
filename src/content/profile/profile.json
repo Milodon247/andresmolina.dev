@@ -1,0 +1,33 @@
+[
+  {
+    "id": "main",
+    "name": "Andrés Molina Bustamante",
+    "headline": {
+      "en": "DevSecOps Architect · CISSP",
+      "es": "Arquitecto DevSecOps · CISSP"
+    },
+    "location": {
+      "en": "Placeholder City, Country",
+      "es": "Ciudad de ejemplo, País"
+    },
+    "summary": {
+      "en": "Placeholder summary: I design secure delivery platforms where security, quality and automation are built into every step, from commit to production.",
+      "es": "Resumen de ejemplo: diseño plataformas de entrega seguras donde la seguridad, la calidad y la automatización forman parte de cada paso, desde el commit hasta producción."
+    },
+    "about": {
+      "en": [
+        "Placeholder paragraph. Describe your background, the kind of teams you have worked with and the problems you enjoy solving.",
+        "Placeholder paragraph. Explain your approach: shifting security left, policy as code, supply-chain security and measurable risk reduction."
+      ],
+      "es": [
+        "Párrafo de ejemplo. Describe tu trayectoria, el tipo de equipos con los que has trabajado y los problemas que disfrutas resolver.",
+        "Párrafo de ejemplo. Explica tu enfoque: llevar la seguridad al inicio del ciclo, políticas como código, seguridad de la cadena de suministro y reducción medible del riesgo."
+      ]
+    },
+    "email": "hello@andresmolina.dev",
+    "links": [
+      { "kind": "github", "label": "GitHub", "url": "https://github.com/example" },
+      { "kind": "linkedin", "label": "LinkedIn", "url": "https://www.linkedin.com/in/example" }
+    ]
+  }
+]
