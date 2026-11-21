@@ -1,0 +1,21 @@
+// Cloudflare Workers with Static Assets: a static site, no Worker script.
+// Deployed only from GitHub Actions (see .github/workflows); never from a laptop.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "andresmolina-dev",
+  "compatibility_date": "2026-11-21",
+  "assets": {
+    "directory": "./dist",
+    // /experience → 307 → /experience/, matching the trailing-slash URLs the site links to.
+    "html_handling": "auto-trailing-slash",
+    // Unknown paths get dist/404.html with status 404.
+    "not_found_handling": "404-page",
+  },
+  // Served on workers.dev until the custom domain is attached.
+  "workers_dev": true,
+  // Required for per-PR Previews (wrangler preview).
+  "preview_urls": true,
+  "previews": {},
+  // No telemetry from CI.
+  "send_metrics": false,
+}
