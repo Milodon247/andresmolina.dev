@@ -78,10 +78,14 @@ jobs:
           WRANGLER_SEND_METRICS: 'false'
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          # wrangler appends structured results (one JSON object per line) to this file;
+          # stdout is human-readable text.
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.ndjson
         run: |
           npx wrangler preview --name "pr-${PR_NUMBER}" --ignore-base-config \
-            --message "PR #${PR_NUMBER} @ ${HEAD_SHA}" --json > "$RUNNER_TEMP/preview.json"
-          url="$(jq -er '.preview.urls[0]' "$RUNNER_TEMP/preview.json")"
+            --message "PR #${PR_NUMBER} @ ${HEAD_SHA}"
+          url="$(jq -ers 'map(select(.type == "preview")) | last | .preview_urls[0]' "$WRANGLER_OUTPUT_FILE_PATH")"
+          [[ "$url" =~ ^https://[a-z0-9.-]+\.workers\.dev$ ]] || { echo "Unexpected preview URL: $url"; exit 1; }
           echo "url=${url}" >> "$GITHUB_OUTPUT"
           echo "### Preview: ${url}" >> "$GITHUB_STEP_SUMMARY"
 
