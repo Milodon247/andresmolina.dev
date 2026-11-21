@@ -1,8 +1,8 @@
 # andresmolina.dev
 
-[![Deploy](https://github.com/OWNER/REPO/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/OWNER/REPO/actions/workflows/deploy.yml)
-[![CodeQL](https://github.com/OWNER/REPO/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/OWNER/REPO/actions/workflows/codeql.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/OWNER/REPO/badge)](https://scorecard.dev/viewer/?uri=github.com/OWNER/REPO)
+[![Deploy](https://github.com/Milodon247/andresmolina.dev/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/Milodon247/andresmolina.dev/actions/workflows/deploy.yml)
+[![CodeQL](https://github.com/Milodon247/andresmolina.dev/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Milodon247/andresmolina.dev/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Milodon247/andresmolina.dev/badge)](https://scorecard.dev/viewer/?uri=github.com/Milodon247/andresmolina.dev)
 [![Security headers](https://img.shields.io/security-headers?url=https%3A%2F%2Fandresmolina.dev)](https://securityheaders.com/?q=andresmolina.dev&followRedirects=on)
 
 CV and portfolio of **Andrés Molina Bustamante**, DevSecOps architect (CISSP).
@@ -196,7 +196,7 @@ credential, but it is still stored as a secret to keep it out of logs.
 GitHub CLI and is safe to re-run:
 
 ```bash
-scripts/github-setup.sh OWNER/REPO https://andresmolina-dev.<your-subdomain>.workers.dev
+scripts/github-setup.sh Milodon247/andresmolina.dev https://andresmolina-dev.<your-subdomain>.workers.dev
 ```
 
 It enables secret scanning, push protection, Dependabot alerts and security updates; allows only
@@ -212,10 +212,10 @@ squash merges; creates the `production` environment (deployable from `main` only
 Then store the Cloudflare secrets in both environments (the CLI prompts for the values):
 
 ```bash
-gh secret set CLOUDFLARE_API_TOKEN --repo OWNER/REPO --env production
-gh secret set CLOUDFLARE_ACCOUNT_ID --repo OWNER/REPO --env production
-gh secret set CLOUDFLARE_API_TOKEN --repo OWNER/REPO --env preview
-gh secret set CLOUDFLARE_ACCOUNT_ID --repo OWNER/REPO --env preview
+gh secret set CLOUDFLARE_API_TOKEN --repo Milodon247/andresmolina.dev --env production
+gh secret set CLOUDFLARE_ACCOUNT_ID --repo Milodon247/andresmolina.dev --env production
+gh secret set CLOUDFLARE_API_TOKEN --repo Milodon247/andresmolina.dev --env preview
+gh secret set CLOUDFLARE_ACCOUNT_ID --repo Milodon247/andresmolina.dev --env preview
 ```
 
 ### Rollback

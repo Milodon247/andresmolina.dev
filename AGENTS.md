@@ -134,7 +134,8 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 - `astro preview` drops `upgrade-insecure-requests` from the CSP: WebKit would otherwise rewrite
   `http://localhost` assets to https. Production keeps it, enforced by `tests/security`.
 - `linkinator.config.json` skips linkedin.com (HTTP 999 for bots), andresmolina.dev (not live yet)
-  and the `github.com/example` placeholders (remove once real links are in `src/content`).
+  and the `github.com/example` profile placeholder (remove once the real GitHub link is in
+  `src/content/profile/profile.json`).
 - `lighthouserc.cjs` uses Playwright's `chrome-headless-shell`: some Windows policies block the
   unsigned full Chromium binary. `CHROME_PATH` overrides it.
 
