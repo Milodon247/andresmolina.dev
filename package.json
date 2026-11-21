@@ -25,7 +25,8 @@
     "test:html": "html-validate \"dist/**/*.html\"",
     "test:links": "linkinator dist --verbosity error",
     "test:lighthouse": "lhci autorun",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "test:all": "npm run typecheck && npm run lint && npm run format:check && npm run test:unit && npm run build && npm run test:dist && npm run test:html && npm run test:links && npm run test:e2e && npm run test:a11y && npm run test:lighthouse"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.6",
