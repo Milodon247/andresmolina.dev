@@ -14,5 +14,8 @@ for (const { size, out } of icons) {
   console.log(`wrote ${out}`);
 }
 
-await sharp('design/og-default.svg').resize(1200, 630).png({ compressionLevel: 9 }).toFile('public/og/default.png');
+await sharp('design/og-default.svg')
+  .resize(1200, 630)
+  .png({ compressionLevel: 9 })
+  .toFile('public/og/default.png');
 console.log('wrote public/og/default.png');

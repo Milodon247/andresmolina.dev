@@ -38,7 +38,9 @@ const structuredData = {
   structuredData={structuredData}
 >
   <section aria-labelledby="hero-heading" class="pb-14">
-    <h1 id="hero-heading" class="text-4xl font-bold tracking-tight text-balance md:text-5xl">{profile.name}</h1>
+    <h1 id="hero-heading" class="text-4xl font-bold tracking-tight text-balance md:text-5xl">
+      {profile.name}
+    </h1>
     <p class="mt-3 text-xl font-medium text-accent">{profile.headline[locale]}</p>
     <p class="mt-1 text-muted">{profile.location[locale]}</p>
     <p class="mt-6 max-w-2xl text-lg leading-relaxed">{profile.summary[locale]}</p>
@@ -60,45 +62,47 @@ const structuredData = {
   </section>
 
   <section aria-labelledby="about-heading" class="border-t border-border py-12">
-    <h2 id="about-heading" class="text-2xl font-bold tracking-tight">{t.home.aboutHeading}</h2>
+    <h2 id="about-heading" class="text-2xl font-bold tracking-tight">
+      {t.home.aboutHeading}
+    </h2>
     <div class="mt-4 max-w-3xl space-y-4 text-lg leading-relaxed">
-      {profile.about[locale].map((paragraph) => <p>{paragraph}</p>)}
+      {profile.about[locale].map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
     </div>
   </section>
 
   <section aria-labelledby="skills-heading" class="border-t border-border py-12">
-    <h2 id="skills-heading" class="text-2xl font-bold tracking-tight">{t.home.skillsHeading}</h2>
+    <h2 id="skills-heading" class="text-2xl font-bold tracking-tight">
+      {t.home.skillsHeading}
+    </h2>
     <div class="mt-6 grid gap-6 sm:grid-cols-2">
-      {
-        skills.map((group) => (
-          <div>
-            <h3 class="font-semibold">{group.data.name[locale]}</h3>
-            <ul class="mt-2 space-y-1 text-muted">
-              {group.data.items.map((item) => (
-                <li>{item}</li>
-              ))}
-            </ul>
-          </div>
-        ))
-      }
+      {skills.map((group) => (
+        <div>
+          <h3 class="font-semibold">{group.data.name[locale]}</h3>
+          <ul class="mt-2 space-y-1 text-muted">
+            {group.data.items.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   </section>
 
-  {
-    featured.length > 0 && (
-      <section aria-labelledby="featured-heading" class="border-t border-border py-12">
-        <h2 id="featured-heading" class="text-2xl font-bold tracking-tight">
-          {t.home.highlightsHeading}
-        </h2>
-        <div class="mt-6 grid gap-6 md:grid-cols-2">
-          {featured.map((project) => (
-            <ProjectCard project={project} locale={locale} headingLevel="h3" />
-          ))}
-        </div>
-        <p class="no-print mt-6">
-          <a href={pathFor('projects', locale)}>{t.home.seeAllProjects}</a>
-        </p>
-      </section>
-    )
-  }
+  {featured.length > 0 && (
+    <section aria-labelledby="featured-heading" class="border-t border-border py-12">
+      <h2 id="featured-heading" class="text-2xl font-bold tracking-tight">
+        {t.home.highlightsHeading}
+      </h2>
+      <div class="mt-6 grid gap-6 md:grid-cols-2">
+        {featured.map((project) => (
+          <ProjectCard project={project} locale={locale} headingLevel="h3" />
+        ))}
+      </div>
+      <p class="no-print mt-6">
+        <a href={pathFor('projects', locale)}>{t.home.seeAllProjects}</a>
+      </p>
+    </section>
+  )}
 </BaseLayout>

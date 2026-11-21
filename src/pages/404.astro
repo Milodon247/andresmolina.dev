@@ -11,14 +11,24 @@ const { en, es } = ui;
   <h1 class="text-4xl font-bold tracking-tight">404</h1>
   <div class="mt-8 grid gap-10 md:grid-cols-2">
     <section aria-labelledby="nf-en">
-      <h2 id="nf-en" class="text-2xl font-semibold">{en.notFound.title}</h2>
+      <h2 id="nf-en" class="text-2xl font-semibold">
+        {en.notFound.title}
+      </h2>
       <p class="mt-2 text-muted">{en.notFound.text}</p>
-      <p class="mt-4"><a href={pathFor('home', 'en')}>{en.notFound.back}</a></p>
+      <p class="mt-4">
+        <a href={pathFor('home', 'en')}>{en.notFound.back}</a>
+      </p>
     </section>
     <section aria-labelledby="nf-es" lang="es">
-      <h2 id="nf-es" class="text-2xl font-semibold">{es.notFound.title}</h2>
+      <h2 id="nf-es" class="text-2xl font-semibold">
+        {es.notFound.title}
+      </h2>
       <p class="mt-2 text-muted">{es.notFound.text}</p>
-      <p class="mt-4"><a href={pathFor('home', 'es')} hreflang="es">{es.notFound.back}</a></p>
+      <p class="mt-4">
+        <a href={pathFor('home', 'es')} hreflang="es">
+          {es.notFound.back}
+        </a>
+      </p>
     </section>
   </div>
 </BaseLayout>

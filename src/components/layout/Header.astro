@@ -15,30 +15,29 @@ const t = useTranslations(locale);
 ---
 
 <header class="border-b border-border">
-  <div
-    class="mx-auto grid max-w-4xl grid-cols-[1fr_auto] items-center gap-x-6 gap-y-3 px-4 py-4 md:grid-cols-[auto_1fr_auto]"
-  >
+  <div class="mx-auto grid max-w-4xl grid-cols-[1fr_auto] items-center gap-x-6 gap-y-3 px-4 py-4 md:grid-cols-[auto_1fr_auto]">
     <a href={pathFor('home', locale)} class="text-lg font-semibold tracking-tight text-fg no-underline">
       {site.name}
     </a>
-    <nav aria-label={t.mainNavLabel} class="no-print col-span-2 row-start-2 md:col-span-1 md:col-start-2 md:row-start-1">
+    <nav
+      aria-label={t.mainNavLabel}
+      class="no-print col-span-2 row-start-2 md:col-span-1 md:col-start-2 md:row-start-1"
+    >
       <ul class="flex flex-wrap gap-x-5 gap-y-1 md:justify-end">
-        {
-          pageKeys.map((key) => (
-            <li>
-              <a
-                href={pathFor(key, locale)}
-                aria-current={key === page ? 'page' : undefined}
-                class:list={[
-                  'inline-flex min-h-11 items-center text-sm font-medium no-underline hover:underline',
-                  key === page ? 'text-accent underline decoration-2' : 'text-muted hover:text-fg',
-                ]}
-              >
-                {t.nav[key]}
-              </a>
-            </li>
-          ))
-        }
+        {pageKeys.map((key) => (
+          <li>
+            <a
+              href={pathFor(key, locale)}
+              aria-current={key === page ? 'page' : undefined}
+              class:list={[
+                'inline-flex min-h-11 items-center text-sm font-medium no-underline hover:underline',
+                key === page ? 'text-accent underline decoration-2' : 'text-muted hover:text-fg',
+              ]}
+            >
+              {t.nav[key]}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
     <LanguageSwitcher locale={locale} page={page} class="no-print justify-self-end" />

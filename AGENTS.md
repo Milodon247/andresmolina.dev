@@ -17,13 +17,13 @@ automation practices, so every change must keep those standards.
 
 ## Commands
 
-| Command           | What it does                                   |
-| ----------------- | ---------------------------------------------- |
-| `npm run dev`     | Dev server on `http://localhost:4321`          |
-| `npm run build`   | `astro check` + static build into `dist/`      |
-| `npm run preview` | Serve `dist/` locally                          |
-| `npm run check`   | Type-check `.astro` and `.ts` files            |
-| `npm run images`  | Regenerate PNG icons and OG image from SVGs    |
+| Command           | What it does                                |
+| ----------------- | ------------------------------------------- |
+| `npm run dev`     | Dev server on `http://localhost:4321`       |
+| `npm run build`   | `astro check` + static build into `dist/`   |
+| `npm run preview` | Serve `dist/` locally                       |
+| `npm run check`   | Type-check `.astro` and `.ts` files         |
+| `npm run images`  | Regenerate PNG icons and OG image from SVGs |
 
 ## Layout
 

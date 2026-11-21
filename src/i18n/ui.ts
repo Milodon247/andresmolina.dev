@@ -169,7 +169,8 @@ const es: UiStrings = {
     },
     projects: {
       title: 'Proyectos',
-      description: 'Proyectos seleccionados de DevSecOps e ingeniería de seguridad de Andrés Molina Bustamante.',
+      description:
+        'Proyectos seleccionados de DevSecOps e ingeniería de seguridad de Andrés Molina Bustamante.',
     },
     contact: {
       title: 'Contacto',
@@ -211,7 +212,8 @@ const es: UiStrings = {
     email: 'Correo',
     elsewhere: 'En otras plataformas',
     securityHeading: 'Reportar un problema de seguridad',
-    securityText: '¿Encontraste una vulnerabilidad en este sitio? El archivo security.txt explica cómo reportarla.',
+    securityText:
+      '¿Encontraste una vulnerabilidad en este sitio? El archivo security.txt explica cómo reportarla.',
   },
   footer: {
     builtWith: 'Sitio estático hecho con Astro. Sin cookies, sin rastreadores, sin recursos de terceros.',

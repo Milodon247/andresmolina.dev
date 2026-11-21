@@ -3,7 +3,13 @@
     "id": "security",
     "order": 1,
     "name": { "en": "Security", "es": "Seguridad" },
-    "items": ["Threat modeling", "SAST / DAST / SCA", "Supply-chain security (SLSA, SBOM)", "Secrets management", "Zero Trust"]
+    "items": [
+      "Threat modeling",
+      "SAST / DAST / SCA",
+      "Supply-chain security (SLSA, SBOM)",
+      "Secrets management",
+      "Zero Trust"
+    ]
   },
   {
     "id": "cloud-platform",

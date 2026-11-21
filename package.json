@@ -13,7 +13,9 @@
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro",
-    "images": "node scripts/generate-images.mjs"
+    "images": "node scripts/generate-images.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.6",
@@ -24,6 +26,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
+    "prettier": "3.10.1",
+    "prettier-plugin-astro": "1.1.2",
+    "prettier-plugin-tailwindcss": "0.8.1",
     "typescript": "6.0.3"
   }
 }

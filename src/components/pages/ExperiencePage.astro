@@ -29,44 +29,42 @@ const jobs = await Promise.all(
 >
   <PageIntro heading={t.experience.heading} intro={t.experience.intro} />
   <ol class="relative space-y-10 border-l border-border pl-6 md:pl-8">
-    {
-      jobs.map(({ job, Content }) => {
-        const { role, company, companyUrl, location, start, end, technologies } = job.data;
-        return (
-          <li class="relative">
-            <span
-              class="absolute top-2 -left-[calc(1.5rem+5px)] size-2.5 rounded-full bg-accent md:-left-[calc(2rem+5px)]"
-              aria-hidden="true"
-            />
-            <article class="space-y-3">
-              <header>
-                <h2 class="text-xl font-semibold tracking-tight">{role}</h2>
-                <p class="font-medium">
-                  {companyUrl ? (
-                    <ExternalLink href={companyUrl} locale={locale}>
-                      {company}
-                    </ExternalLink>
-                  ) : (
-                    company
-                  )}
-                  <span class="text-muted"> · {location}</span>
-                </p>
-                <p class="text-sm text-muted">
-                  <time datetime={start}>{formatYearMonth(start, locale)}</time>
-                  {' – '}
-                  {end ? <time datetime={end}>{formatYearMonth(end, locale)}</time> : t.experience.present}
-                  {' · '}
-                  {formatDuration(monthsBetween(start, end ?? now), locale)}
-                </p>
-              </header>
-              <div class="cv-prose">
-                <Content />
-              </div>
-              <TagList label={t.experience.technologies} items={technologies} />
-            </article>
-          </li>
-        );
-      })
-    }
+    {jobs.map(({ job, Content }) => {
+      const { role, company, companyUrl, location, start, end, technologies } = job.data;
+      return (
+        <li class="relative">
+          <span
+            class="absolute top-2 -left-[calc(1.5rem+5px)] size-2.5 rounded-full bg-accent md:-left-[calc(2rem+5px)]"
+            aria-hidden="true"
+          />
+          <article class="space-y-3">
+            <header>
+              <h2 class="text-xl font-semibold tracking-tight">{role}</h2>
+              <p class="font-medium">
+                {companyUrl ? (
+                  <ExternalLink href={companyUrl} locale={locale}>
+                    {company}
+                  </ExternalLink>
+                ) : (
+                  company
+                )}
+                <span class="text-muted"> · {location}</span>
+              </p>
+              <p class="text-sm text-muted">
+                <time datetime={start}>{formatYearMonth(start, locale)}</time>
+                {' – '}
+                {end ? <time datetime={end}>{formatYearMonth(end, locale)}</time> : t.experience.present}
+                {' · '}
+                {formatDuration(monthsBetween(start, end ?? now), locale)}
+              </p>
+            </header>
+            <div class="cv-prose">
+              <Content />
+            </div>
+            <TagList label={t.experience.technologies} items={technologies} />
+          </article>
+        </li>
+      );
+    })}
   </ol>
 </BaseLayout>

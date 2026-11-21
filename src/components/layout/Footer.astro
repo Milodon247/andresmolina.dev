@@ -17,13 +17,17 @@ const year = new Date().getUTCFullYear();
 ---
 
 <footer class="no-print mt-16 border-t border-border">
-  <div
-    class="mx-auto flex max-w-4xl flex-col gap-4 px-4 py-8 text-sm text-muted md:flex-row md:items-center md:justify-between"
-  >
+  <div class="mx-auto flex max-w-4xl flex-col gap-4 px-4 py-8 text-sm text-muted md:flex-row md:items-center md:justify-between">
     <div class="space-y-1">
-      <p>© {year} {site.author}</p>
+      <p>
+        © {year} {site.author}
+      </p>
       <p>{t.footer.builtWith}</p>
-      <p><ExternalLink href={site.repoUrl} locale={locale}>{t.footer.source}</ExternalLink></p>
+      <p>
+        <ExternalLink href={site.repoUrl} locale={locale}>
+          {t.footer.source}
+        </ExternalLink>
+      </p>
     </div>
     <LanguageSwitcher locale={locale} page={page} class="self-start md:self-auto" />
   </div>

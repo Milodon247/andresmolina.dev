@@ -11,15 +11,15 @@ Content Security Policy and hardened security headers.
 
 ## Stack
 
-| Piece        | Choice                                                                    |
-| ------------ | ------------------------------------------------------------------------- |
-| Framework    | [Astro](https://astro.build) 7, `output: 'static'`                        |
-| Language     | TypeScript, `strictest` config                                            |
-| Styles       | Tailwind CSS 4 (`@tailwindcss/vite`), light/dark via `prefers-color-scheme` |
-| Content      | Astro Content Collections validated with Zod                              |
-| Font         | Inter (variable), self-hosted via Fontsource                              |
-| SEO          | `@astrojs/sitemap` with hreflang, `robots.txt`, Open Graph, JSON-LD       |
-| Runtime      | Node `>=22.23.4` (`.nvmrc`: 26), npm with committed lockfile              |
+| Piece     | Choice                                                                      |
+| --------- | --------------------------------------------------------------------------- |
+| Framework | [Astro](https://astro.build) 7, `output: 'static'`                          |
+| Language  | TypeScript, `strictest` config                                              |
+| Styles    | Tailwind CSS 4 (`@tailwindcss/vite`), light/dark via `prefers-color-scheme` |
+| Content   | Astro Content Collections validated with Zod                                |
+| Font      | Inter (variable), self-hosted via Fontsource                                |
+| SEO       | `@astrojs/sitemap` with hreflang, `robots.txt`, Open Graph, JSON-LD         |
+| Runtime   | Node `>=22.23.4` (`.nvmrc`: 26), npm with committed lockfile                |
 
 ## Getting started
 
@@ -29,13 +29,13 @@ npm ci
 npm run dev        # http://localhost:4321
 ```
 
-| Command           | Description                                               |
-| ----------------- | --------------------------------------------------------- |
-| `npm run dev`     | Development server with hot reload                        |
-| `npm run build`   | Type-check (`astro check`) and build into `dist/`         |
-| `npm run preview` | Serve the production build locally                        |
-| `npm run check`   | Type-check only                                           |
-| `npm run images`  | Regenerate icons and the OG image from their SVG sources  |
+| Command           | Description                                              |
+| ----------------- | -------------------------------------------------------- |
+| `npm run dev`     | Development server with hot reload                       |
+| `npm run build`   | Type-check (`astro check`) and build into `dist/`        |
+| `npm run preview` | Serve the production build locally                       |
+| `npm run check`   | Type-check only                                          |
+| `npm run images`  | Regenerate icons and the OG image from their SVG sources |
 
 ## Languages and URLs
 
@@ -56,14 +56,14 @@ All CV data lives in `src/content/`. Edit the files and run `npm run build`; the
 a clear message if something does not match its schema (`src/content.config.ts`) or if an entry is
 missing in one of the languages.
 
-| What                    | File(s)                                                       |
-| ----------------------- | ------------------------------------------------------------- |
-| Name, headline, summary, about, email, social links | `src/content/profile/profile.json` |
-| Jobs                    | `src/content/experience/en/<slug>.md` + `es/<slug>.md`        |
-| Projects                | `src/content/projects/en/<slug>.md` + `es/<slug>.md`          |
-| Certifications          | `src/content/certifications/certifications.json`              |
-| Skills                  | `src/content/skills/skills.json`                              |
-| Interface text (menus, headings) | `src/i18n/ui.ts`                                     |
+| What                                                | File(s)                                                |
+| --------------------------------------------------- | ------------------------------------------------------ |
+| Name, headline, summary, about, email, social links | `src/content/profile/profile.json`                     |
+| Jobs                                                | `src/content/experience/en/<slug>.md` + `es/<slug>.md` |
+| Projects                                            | `src/content/projects/en/<slug>.md` + `es/<slug>.md`   |
+| Certifications                                      | `src/content/certifications/certifications.json`       |
+| Skills                                              | `src/content/skills/skills.json`                       |
+| Interface text (menus, headings)                    | `src/i18n/ui.ts`                                       |
 
 Conventions:
 

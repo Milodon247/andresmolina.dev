@@ -18,15 +18,18 @@ const projects = await Promise.all(
 );
 ---
 
-<BaseLayout title={t.meta.projects.title} description={t.meta.projects.description} locale={locale} page="projects">
+<BaseLayout
+  title={t.meta.projects.title}
+  description={t.meta.projects.description}
+  locale={locale}
+  page="projects"
+>
   <PageIntro heading={t.projects.heading} intro={t.projects.intro} />
   <div class="grid gap-6">
-    {
-      projects.map(({ project, Content }) => (
-        <ProjectCard project={project} locale={locale} withBody>
-          <Content />
-        </ProjectCard>
-      ))
-    }
+    {projects.map(({ project, Content }) => (
+      <ProjectCard project={project} locale={locale} withBody>
+        <Content />
+      </ProjectCard>
+    ))}
   </div>
 </BaseLayout>

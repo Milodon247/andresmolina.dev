@@ -24,37 +24,35 @@ const t = useTranslations(locale);
 <article class="flex flex-col gap-4 rounded-xl border border-border bg-surface p-6">
   <div>
     <Heading class="text-xl font-semibold tracking-tight">{title}</Heading>
-    <p class="mt-1 text-sm text-muted"><time datetime={date}>{formatYearMonth(date, locale)}</time></p>
+    <p class="mt-1 text-sm text-muted">
+      <time datetime={date}>{formatYearMonth(date, locale)}</time>
+    </p>
   </div>
   <p class="leading-relaxed">{summary}</p>
-  {
-    withBody && (
-      <div class="cv-prose">
-        <slot />
-      </div>
-    )
-  }
+  {withBody && (
+    <div class="cv-prose">
+      <slot />
+    </div>
+  )}
   <TagList label={t.projects.technologies} items={technologies} />
-  {
-    (repoUrl || siteUrl) && (
-      <ul class="flex flex-wrap gap-x-5 gap-y-1 text-sm">
-        {repoUrl && (
-          <li>
-            <ExternalLink href={repoUrl} locale={locale} class="inline-flex min-h-11 items-center gap-1.5">
-              <Icon name="github" class="size-4" />
-              {t.projects.source}
-            </ExternalLink>
-          </li>
-        )}
-        {siteUrl && (
-          <li>
-            <ExternalLink href={siteUrl} locale={locale} class="inline-flex min-h-11 items-center gap-1.5">
-              <Icon name="external" class="size-4" />
-              {t.projects.website}
-            </ExternalLink>
-          </li>
-        )}
-      </ul>
-    )
-  }
+  {(repoUrl || siteUrl) && (
+    <ul class="flex flex-wrap gap-x-5 gap-y-1 text-sm">
+      {repoUrl && (
+        <li>
+          <ExternalLink href={repoUrl} locale={locale} class="inline-flex min-h-11 items-center gap-1.5">
+            <Icon name="github" class="size-4" />
+            {t.projects.source}
+          </ExternalLink>
+        </li>
+      )}
+      {siteUrl && (
+        <li>
+          <ExternalLink href={siteUrl} locale={locale} class="inline-flex min-h-11 items-center gap-1.5">
+            <Icon name="external" class="size-4" />
+            {t.projects.website}
+          </ExternalLink>
+        </li>
+      )}
+    </ul>
+  )}
 </article>
