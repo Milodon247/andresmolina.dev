@@ -1,0 +1,24 @@
+# Git hooks, installed by `npm install` / `npm ci` through the "prepare" script.
+# Requires gitleaks on PATH (see README). A missing tool fails the hook instead of skipping it.
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: secrets (gitleaks)
+      run: gitleaks git --pre-commit --staged --redact --no-banner
+
+    - name: lint (eslint)
+      glob: '*.{ts,js,mjs,cjs,astro}'
+      run: npx eslint --max-warnings=0 {staged_files}
+
+    - name: format (prettier)
+      run: npx prettier --check --ignore-unknown {staged_files}
+
+    - name: typecheck
+      glob: '*.{ts,astro,json,md}'
+      run: npm run typecheck
+
+commit-msg:
+  jobs:
+    - name: conventional commits
+      run: node scripts/check-commit-msg.ts {1}

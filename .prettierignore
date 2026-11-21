@@ -8,4 +8,3 @@ playwright-report/
 coverage/
 public/_headers
 public/.well-known/
-.lighthouseci

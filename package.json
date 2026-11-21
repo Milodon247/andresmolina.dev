@@ -24,7 +24,8 @@
     "test:a11y": "playwright test --grep @a11y",
     "test:html": "html-validate \"dist/**/*.html\"",
     "test:links": "linkinator dist --verbosity error",
-    "test:lighthouse": "lhci autorun"
+    "test:lighthouse": "lhci autorun",
+    "prepare": "lefthook install"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.6",
@@ -45,6 +46,7 @@
     "eslint-plugin-jsx-a11y-x": "0.2.0",
     "globals": "17.14.0",
     "html-validate": "11.21.1",
+    "lefthook": "2.2.2",
     "linkinator": "8.1.0",
     "prettier": "3.10.1",
     "prettier-plugin-astro": "1.1.2",
@@ -60,5 +62,8 @@
     "linkinator": {
       "glob": "14.0.6"
     }
+  },
+  "allowScripts": {
+    "lefthook": false
   }
 }
