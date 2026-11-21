@@ -21,7 +21,7 @@ const t = useTranslations(locale);
     <a href={pathFor('home', locale)} class="text-lg font-semibold tracking-tight text-fg no-underline">
       {site.name}
     </a>
-    <nav aria-label={t.mainNavLabel} class="no-print col-span-2 row-start-2 md:col-span-1 md:row-start-1">
+    <nav aria-label={t.mainNavLabel} class="no-print col-span-2 row-start-2 md:col-span-1 md:col-start-2 md:row-start-1">
       <ul class="flex flex-wrap gap-x-5 gap-y-1 md:justify-end">
         {
           pageKeys.map((key) => (
