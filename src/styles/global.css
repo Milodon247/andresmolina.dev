@@ -5,10 +5,23 @@
  * under prefers-color-scheme, so every utility (bg-bg, text-muted, …) adapts without JS.
  * All text/background pairs meet WCAG 2.2 AA (4.5:1) in both schemes.
  */
+/*
+ * Local fallback with Inter's metrics, so swapping to the web font does not move the layout (CLS).
+ * Liberation Sans is metric-compatible with Arial on Linux.
+ */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 107.12%;
+  ascent-override: 90.44%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+}
+
 @theme {
   --font-sans:
-    'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+    'Inter Variable', 'Inter Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
 
   --color-bg: #ffffff;
   --color-surface: #f8fafc;

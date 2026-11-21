@@ -1,4 +1,6 @@
 ---
+// Preload the Latin subset (covers en and es) so text renders in Inter from the first paint.
+import interLatinUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import { site } from '@/config/site';
 import { defaultLocale, localeMeta, locales, type Locale } from '@/i18n/config';
 import { pathFor, type PageKey } from '@/i18n/routes';
@@ -29,6 +31,7 @@ const jsonLd = structuredData ? JSON.stringify(structuredData).replace(/</g, '\\
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preload" href={interLatinUrl} as="font" type="font/woff2" crossorigin="anonymous" />
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <meta name="author" content={site.author} />
