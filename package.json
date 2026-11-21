@@ -23,7 +23,8 @@
     "test:e2e": "playwright test --grep-invert @a11y",
     "test:a11y": "playwright test --grep @a11y",
     "test:html": "html-validate \"dist/**/*.html\"",
-    "test:links": "linkinator dist --verbosity error"
+    "test:links": "linkinator dist --verbosity error",
+    "test:lighthouse": "lhci autorun"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.6",
@@ -36,6 +37,7 @@
     "@astrojs/check": "0.9.12",
     "@axe-core/playwright": "4.14.0",
     "@eslint/js": "10.0.1",
+    "@lhci/cli": "0.16.1",
     "@playwright/test": "1.65.1",
     "@types/node": "24.19.2",
     "eslint": "10.15.0",
