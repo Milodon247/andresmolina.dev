@@ -1,10 +1,26 @@
+import { readFileSync } from 'node:fs';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
+import { headersForPath, parseHeadersFile } from './scripts/lib/cloudflare-headers.ts';
 import { localeMeta, locales } from './src/i18n/config';
 import { lookupPath, pathFor } from './src/i18n/routes';
 
 const site = 'https://andresmolina.dev';
+
+// `astro preview` serves the build with the production security headers, so E2E tests catch any
+// CSP violation locally. Only the site-wide ("/*") rule applies here; Cloudflare applies all rules.
+// `upgrade-insecure-requests` is dropped locally only: WebKit would rewrite http://localhost
+// subresources to https and break the page. Production keeps it (enforced by tests/security).
+const productionHeaders = headersForPath(parseHeadersFile(readFileSync('public/_headers', 'utf8')), '/');
+const previewHeaders = {
+  ...productionHeaders,
+  'Content-Security-Policy': (productionHeaders['Content-Security-Policy'] ?? '')
+    .split(';')
+    .map((directive) => directive.trim())
+    .filter((directive) => directive !== 'upgrade-insecure-requests')
+    .join('; '),
+};
 
 export default defineConfig({
   site,
@@ -41,5 +57,6 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    preview: { headers: previewHeaders },
   },
 });

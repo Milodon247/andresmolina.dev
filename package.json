@@ -19,7 +19,9 @@
     "lint": "eslint .",
     "typecheck": "astro check && tsc --noEmit",
     "test:unit": "vitest run --project unit",
-    "test:dist": "vitest run --project dist"
+    "test:dist": "vitest run --project dist",
+    "test:e2e": "playwright test --grep-invert @a11y",
+    "test:a11y": "playwright test --grep @a11y"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.6",
@@ -30,7 +32,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
+    "@axe-core/playwright": "4.14.0",
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.1",
     "@types/node": "24.19.2",
     "eslint": "10.15.0",
     "eslint-plugin-astro": "3.2.1",
