@@ -1,13 +1,18 @@
 # andresmolina.dev
 
+[![Deploy](https://github.com/OWNER/REPO/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/OWNER/REPO/actions/workflows/deploy.yml)
+[![CodeQL](https://github.com/OWNER/REPO/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/OWNER/REPO/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/OWNER/REPO/badge)](https://scorecard.dev/viewer/?uri=github.com/OWNER/REPO)
+[![Security headers](https://img.shields.io/security-headers?url=https%3A%2F%2Fandresmolina.dev)](https://securityheaders.com/?q=andresmolina.dev&followRedirects=on)
+
 CV and portfolio of **Andrés Molina Bustamante**, DevSecOps architect (CISSP).
 
 The site doubles as a technical showcase: it is fully static, bilingual (English / Spanish), ships
 **zero client-side JavaScript**, loads nothing from third-party origins and is served with a strict
 Content Security Policy and hardened security headers.
 
-> Status: **Phase 2 (tests)**. The site runs locally and is covered by the full test suite. The
-> Cloudflare CI/CD pipeline (Phase 3) is not set up yet; badges will be added with it.
+> Status: **Phase 3 (CI/CD)**. Every change goes through a pull request, the full test suite, a
+> Cloudflare preview with smoke tests, and is deployed to production by GitHub Actions only.
 
 ## Stack
 
@@ -34,14 +39,15 @@ npx playwright install chromium webkit   # browsers for E2E, a11y and Lighthouse
 npm run dev                              # http://localhost:4321
 ```
 
-| Command            | Description                                                  |
-| ------------------ | ------------------------------------------------------------ |
-| `npm run dev`      | Development server with hot reload                           |
-| `npm run build`    | Type-check (`astro check`) and build into `dist/`            |
-| `npm run preview`  | Serve the production build locally with the security headers |
-| `npm run test:all` | Run every check and test (see [Testing](#testing))           |
-| `npm run format`   | Format the code with Prettier                                |
-| `npm run images`   | Regenerate icons and the OG image from their SVG sources     |
+| Command              | Description                                                  |
+| -------------------- | ------------------------------------------------------------ |
+| `npm run dev`        | Development server with hot reload                           |
+| `npm run build`      | Type-check (`astro check`) and build into `dist/`            |
+| `npm run preview`    | Serve the production build locally with the security headers |
+| `npm run test:all`   | Run every check and test (see [Testing](#testing))           |
+| `npm run test:smoke` | Smoke tests against a deployed URL (`BASE_URL=https://…`)    |
+| `npm run format`     | Format the code with Prettier                                |
+| `npm run images`     | Regenerate icons and the OG image from their SVG sources     |
 
 ## Testing
 
@@ -105,6 +111,9 @@ Conventions:
 - A Markdown entry must use the **same file name** in `en/` and `es/`; its body (bullets or
   paragraphs) is rendered on the page.
 - Links must be `https://`.
+- **This repository is public.** Only add what you want on the public site: no phone number, home
+  address, date of birth or ID numbers. Prefer a dedicated email alias over a personal inbox, and
+  only add a certification's credential ID if the issuer expects it to be shared for verification.
 
 Example job (`src/content/experience/en/acme.md`):
 
@@ -140,14 +149,97 @@ technologies: [Kubernetes, Terraform]
 `upgrade-insecure-requests`, which would break `http://localhost` in WebKit). `astro dev` does not
 apply it.
 
+## Deployment pipeline
+
+The site runs on **Cloudflare Workers with Static Assets** (an assets-only Worker serving `dist/`,
+configured in [`wrangler.jsonc`](wrangler.jsonc)), which Cloudflare recommends over Pages for new
+projects. Nothing is deployed from a laptop or the Cloudflare dashboard: the Worker is created by
+the first `wrangler deploy` in CI.
+
+| Workflow                                             | Trigger                 | What it does                                                                                                                                           |
+| ---------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`checks.yml`](.github/workflows/checks.yml)         | called by the two below | `test:all`, `npm audit --audit-level=high` + `npm audit signatures`, gitleaks on the full history, zizmor on the workflows. Uploads the tested `dist/` |
+| [`pr.yml`](.github/workflows/pr.yml)                 | pull request to `main`  | Checks + dependency review, then `wrangler preview` of the tested build as `pr-<number>` and smoke tests against that URL (real HTTP headers)          |
+| [`pr-cleanup.yml`](.github/workflows/pr-cleanup.yml) | pull request closed     | Deletes the PR's preview                                                                                                                               |
+| [`deploy.yml`](.github/workflows/deploy.yml)         | push to `main`          | Checks → `wrangler deploy --strict` of the tested build (environment `production`) → smoke tests against production                                    |
+| [`rollback.yml`](.github/workflows/rollback.yml)     | manual                  | `wrangler rollback` to a given (or the previous) version, then production smoke tests                                                                  |
+| [`codeql.yml`](.github/workflows/codeql.yml)         | PR, push, weekly        | CodeQL `security-extended` for TypeScript and GitHub Actions                                                                                           |
+| [`scorecard.yml`](.github/workflows/scorecard.yml)   | push, weekly            | OpenSSF Scorecard, published for the badge and uploaded to Code Scanning                                                                               |
+| [`dependabot.yml`](.github/dependabot.yml)           | weekly                  | Grouped npm and Actions updates with a 7-day cooldown (security updates are not delayed)                                                               |
+
+Pipeline hardening: every action pinned to a full commit SHA, `permissions: {}` by default and the
+minimum per job, `persist-credentials: false`, `timeout-minutes` on every job, `concurrency` so two
+production changes never overlap, no `pull_request_target`, no dependency cache in deploy paths,
+gitleaks installed from a checksum-verified release, wrangler run from the lockfile (no third-party
+deploy action). Pull requests from forks and from Dependabot run all checks but never receive
+secrets or previews. zizmor (pedantic) reports no findings.
+
+### Cloudflare API token (least privilege)
+
+Create it in **Cloudflare dashboard → My Profile → API Tokens → Create Token → Create Custom Token**:
+
+| Field               | Value                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Permissions         | **Account → Workers Scripts → Edit** (nothing else)                                                           |
+| Account Resources   | **Include → your account** only                                                                               |
+| Client IP filtering | Leave empty: GitHub-hosted runners have no fixed IP range                                                     |
+| TTL                 | **End date ≤ 90 days**. Rotate before it expires (create a new token, update the secrets, delete the old one) |
+
+When the custom domain is attached, add **Zone → Workers Routes → Edit** restricted to the
+`andresmolina.dev` zone (to be confirmed with the minimal token when the domain is connected).
+Your **Account ID** is shown on the Workers & Pages overview page; it is an identifier, not a
+credential, but it is still stored as a secret to keep it out of logs.
+
+### GitHub repository setup
+
+[`scripts/github-setup.sh`](scripts/github-setup.sh) applies the whole configuration with the
+GitHub CLI and is safe to re-run:
+
+```bash
+scripts/github-setup.sh OWNER/REPO https://andresmolina-dev.<your-subdomain>.workers.dev
+```
+
+It enables secret scanning, push protection, Dependabot alerts and security updates; allows only
+squash merges; creates the `production` environment (deployable from `main` only, with the
+`PRODUCTION_URL` variable) and the `preview` environment; and creates this **ruleset for `main`**:
+
+- Pull request required; review threads must be resolved; squash merge only.
+- Required status checks (branch must be up to date): `Checks / test:all`, `Checks / npm audit`,
+  `Checks / gitleaks`, `Checks / zizmor`, `Dependency review`, `Smoke tests (preview)`,
+  `Analyze (javascript-typescript)`, `Analyze (actions)`.
+- No force pushes, no deletion, linear history.
+
+Then store the Cloudflare secrets in both environments (the CLI prompts for the values):
+
+```bash
+gh secret set CLOUDFLARE_API_TOKEN --repo OWNER/REPO --env production
+gh secret set CLOUDFLARE_ACCOUNT_ID --repo OWNER/REPO --env production
+gh secret set CLOUDFLARE_API_TOKEN --repo OWNER/REPO --env preview
+gh secret set CLOUDFLARE_ACCOUNT_ID --repo OWNER/REPO --env preview
+```
+
+### Rollback
+
+If the production smoke tests fail, the `Deploy` run turns red and its summary shows the version
+that was live before. To restore it: **Actions → Rollback → Run workflow**, paste that
+`version_id` (or leave it empty for the version before the current one) and give a reason. The
+workflow runs `wrangler rollback` and the production smoke tests again. Afterwards, fix the cause in
+a pull request: the next merge to `main` deploys normally.
+
+Limits (Cloudflare): only the 100 most recent versions can be restored, and versions older than
+30 days may be deleted by retention. `npx wrangler deployments list` and `npx wrangler versions list`
+show the history.
+
 ## Project structure
 
 ```
+.github/              workflows, Dependabot, Copilot instructions
 astro.config.ts       site URL, static output, sitemap (hreflang), Tailwind, preview headers
+wrangler.jsonc        Cloudflare Worker (static assets) configuration
 public/               _headers, security.txt, icons, OG image, manifest
 design/               SVG sources of generated images
 scripts/              maintenance scripts, commit-msg check, shared tooling (scripts/lib)
-tests/                unit, security, repo, dist (Vitest) and e2e (Playwright + axe)
+tests/                unit, security, repo, dist (Vitest), e2e (Playwright + axe), smoke (deployed URL)
 src/content/          CV data (see above) and its Zod schemas (schemas.ts)
 src/content.config.ts collections wiring
 src/i18n/             locales, translated route map, UI strings
@@ -166,6 +258,6 @@ Instructions for coding agents live in a single file, [`AGENTS.md`](AGENTS.md).
 ## Roadmap
 
 1. **Phase 1, local site**: done.
-2. **Phase 2, tests**: done, pending review.
-3. **Phase 3, CI/CD**: GitHub Actions to Cloudflare with preview deploys, smoke tests and
-   repository hardening.
+2. **Phase 2, tests**: done.
+3. **Phase 3, CI/CD**: implemented; first pipeline runs pending.
+4. Next: attach the custom domain `andresmolina.dev`, then submit it to the HSTS preload list.

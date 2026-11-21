@@ -17,23 +17,24 @@ automation practices, so every change must keep those standards.
 
 ## Commands
 
-| Command                   | What it does                                                         |
-| ------------------------- | -------------------------------------------------------------------- |
-| `npm run dev`             | Dev server on `http://localhost:4321`                                |
-| `npm run build`           | `astro check` + static build into `dist/`                            |
-| `npm run preview`         | Serve `dist/` locally **with the production security headers**       |
-| `npm run typecheck`       | `astro check` + `tsc --noEmit`                                       |
-| `npm run lint`            | ESLint (TypeScript type-aware, Astro, jsx-a11y strict)               |
-| `npm run format`          | Prettier write (`format:check` to verify)                            |
-| `npm run test:unit`       | Vitest: utilities, i18n, schemas, `_headers`/CSP, security.txt, repo |
-| `npm run test:dist`       | Vitest on `dist/`: nothing inline, no third-party resources, SEO     |
-| `npm run test:html`       | html-validate on `dist/`                                             |
-| `npm run test:links`      | linkinator on `dist/` (internal + external)                          |
-| `npm run test:e2e`        | Playwright against `astro preview` (3 browser projects)              |
-| `npm run test:a11y`       | axe, WCAG 2.2 AA, every page, light and dark                         |
-| `npm run test:lighthouse` | Lighthouse CI budgets (perf ≥ 95, others = 100)                      |
-| `npm run test:all`        | Everything above, in order, stopping at the first failure            |
-| `npm run images`          | Regenerate PNG icons and OG image from SVGs                          |
+| Command                   | What it does                                                          |
+| ------------------------- | --------------------------------------------------------------------- |
+| `npm run dev`             | Dev server on `http://localhost:4321`                                 |
+| `npm run build`           | `astro check` + static build into `dist/`                             |
+| `npm run preview`         | Serve `dist/` locally **with the production security headers**        |
+| `npm run typecheck`       | `astro check` + `tsc --noEmit`                                        |
+| `npm run lint`            | ESLint (TypeScript type-aware, Astro, jsx-a11y strict)                |
+| `npm run format`          | Prettier write (`format:check` to verify)                             |
+| `npm run test:unit`       | Vitest: utilities, i18n, schemas, `_headers`/CSP, security.txt, repo  |
+| `npm run test:dist`       | Vitest on `dist/`: nothing inline, no third-party resources, SEO      |
+| `npm run test:html`       | html-validate on `dist/`                                              |
+| `npm run test:links`      | linkinator on `dist/` (internal + external)                           |
+| `npm run test:e2e`        | Playwright against `astro preview` (3 browser projects)               |
+| `npm run test:a11y`       | axe, WCAG 2.2 AA, every page, light and dark                          |
+| `npm run test:lighthouse` | Lighthouse CI budgets (perf ≥ 95, others = 100)                       |
+| `npm run test:all`        | Everything above, in order, stopping at the first failure             |
+| `npm run test:smoke`      | Smoke tests against a deployed URL (`BASE_URL=https://…`), used by CI |
+| `npm run images`          | Regenerate PNG icons and OG image from SVGs                           |
 
 **Before finishing any change, run `npm run test:all`.** Tests that need the build (`test:dist`,
 `test:html`, `test:links`, `test:e2e`, `test:a11y`, `test:lighthouse`) read `dist/`, so run
@@ -42,6 +43,9 @@ automation practices, so every change must keep those standards.
 ## Layout
 
 ```
+.github/workflows/      checks (reusable), pr (+ preview), pr-cleanup, deploy, rollback, codeql, scorecard
+.github/dependabot.yml  grouped weekly updates with cooldown
+wrangler.jsonc          Cloudflare Workers Static Assets config (assets-only, no Worker script)
 astro.config.ts         Astro config (static output, sitemap with hreflang, Tailwind, preview headers)
 design/                 SVG sources for generated images (OG image)
 scripts/                maintenance scripts, commit-msg check
@@ -86,11 +90,20 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
    exactly (`.npmrc` has `save-exact=true`). Dependency install scripts are blocked by npm unless
    listed in `allowScripts`; never approve one without asking. Vulnerable transitive packages are
    fixed with `overrides` (documented in the commit), never with `npm audit fix --force`.
-9. **No Cloudflare/deploy changes** until the owner explicitly approves Phase 3.
-10. Never commit secrets. `.env*` files are git-ignored; gitleaks runs on every commit.
+9. **Deployments happen only in GitHub Actions** (`deploy.yml`, `pr.yml`, `rollback.yml`). Never
+   run `wrangler deploy`, `wrangler preview` or `wrangler rollback` locally, and never ask for or
+   handle the Cloudflare token. Changes to Cloudflare resources (custom domain, token scopes) need
+   the owner's approval.
+10. Never commit secrets. `.env*` files are git-ignored; gitleaks runs on every commit and in CI.
+    **The repository is public:** never add personal data that the site does not need (phone,
+    address, personal email, local paths, employer-internal information).
 11. **Never weaken a test to make it pass** (skip lists, thresholds, allowed errors). If a check
     must be relaxed, ask the owner and document why next to the change.
 12. Git hooks (lefthook) must not be bypassed (`--no-verify`).
+13. **Workflows:** pin every action to a full commit SHA with the version in a comment, keep
+    `permissions: {}` at the top and the minimum per job, `persist-credentials: false`, a
+    `timeout-minutes` on every job, no `pull_request_target`, no `${{ }}` expressions inside `run:`
+    (pass them through `env:`). zizmor runs in CI with the pedantic persona and must stay clean.
 
 ## Conventions
 
@@ -113,6 +126,11 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 
 ## Known exceptions (documented on purpose)
 
+- Pull requests from Dependabot (and forks) skip the Cloudflare preview: GitHub does not give them
+  Actions secrets. They still run every check; production smoke tests run after merge.
+- `allowScripts` denies the install scripts of lefthook, esbuild and workerd: nothing we run needs
+  them (hooks are installed by our own `prepare` script; wrangler deploy/preview work without them).
+
 - `astro preview` drops `upgrade-insecure-requests` from the CSP: WebKit would otherwise rewrite
   `http://localhost` assets to https. Production keeps it, enforced by `tests/security`.
 - `linkinator.config.json` skips linkedin.com (HTTP 999 for bots), andresmolina.dev (not live yet)
@@ -123,5 +141,6 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 ## Roadmap
 
 - Phase 1: local site. Done.
-- Phase 2 (current): tests and git hooks.
-- Phase 3: CI/CD to Cloudflare. Only after the owner approves.
+- Phase 2: tests and git hooks. Done.
+- Phase 3 (current): CI/CD to Cloudflare Workers Static Assets.
+- Next: custom domain `andresmolina.dev` (owner approval needed), then HSTS preload submission.
