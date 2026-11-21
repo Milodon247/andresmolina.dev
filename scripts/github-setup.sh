@@ -24,8 +24,12 @@ gh api -X PATCH "repos/${repo}" --silent \
 echo "== Environments"
 # production: only the main branch may deploy.
 gh api -X PUT "repos/${repo}/environments/production" --silent --input - <<'JSON'
-{ "deployment_branch_policy": { "protected_branches": true, "custom_branch_policies": false } }
+{ "deployment_branch_policy": { "protected_branches": false, "custom_branch_policies": true } }
 JSON
+gh api "repos/${repo}/environments/production/deployment-branch-policies" \
+  --jq '.branch_policies[].name' | grep -qx main ||
+  gh api -X POST "repos/${repo}/environments/production/deployment-branch-policies" --silent \
+    -f name=main -f type=branch
 gh variable set PRODUCTION_URL --repo "${repo}" --env production --body "${production_url}"
 # preview: used by pull requests from branches of this repository.
 gh api -X PUT "repos/${repo}/environments/preview" --silent --input - <<'JSON'
