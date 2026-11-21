@@ -1,0 +1,16 @@
+{
+  "recurse": true,
+  "checkCss": true,
+  "checkFragments": true,
+  "retry": true,
+  "retryErrors": true,
+  "retryErrorsCount": 3,
+  "timeout": 15000,
+  "concurrency": 10,
+  "userAgent": "Mozilla/5.0 (compatible; andresmolina.dev link checker)",
+  "skip": [
+    "^https://andresmolina\\.dev(/|$)",
+    "^https://www\\.linkedin\\.com/",
+    "^https://github\\.com/example(/|$)"
+  ]
+}
