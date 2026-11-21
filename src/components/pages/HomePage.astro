@@ -1,0 +1,104 @@
+---
+import ProjectCard from '@/components/cv/ProjectCard.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { site } from '@/config/site';
+import { localeMeta, type Locale } from '@/i18n/config';
+import { pathFor } from '@/i18n/routes';
+import { useTranslations } from '@/i18n/ui';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getProfile, getProjects, getSkills } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const profile = await getProfile();
+const skills = await getSkills();
+const featured = (await getProjects(locale)).filter((p) => p.data.featured).slice(0, 2);
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: profile.headline[locale],
+  url: new URL(pathFor('home', locale), site.url).href,
+  email: `mailto:${profile.email}`,
+  sameAs: profile.links.map((l) => l.url),
+  knowsLanguage: Object.values(localeMeta).map((m) => m.htmlLang),
+};
+---
+
+<BaseLayout
+  title={t.meta.home.title}
+  description={t.meta.home.description}
+  locale={locale}
+  page="home"
+  structuredData={structuredData}
+>
+  <section aria-labelledby="hero-heading" class="pb-14">
+    <h1 id="hero-heading" class="text-4xl font-bold tracking-tight text-balance md:text-5xl">{profile.name}</h1>
+    <p class="mt-3 text-xl font-medium text-accent">{profile.headline[locale]}</p>
+    <p class="mt-1 text-muted">{profile.location[locale]}</p>
+    <p class="mt-6 max-w-2xl text-lg leading-relaxed">{profile.summary[locale]}</p>
+    <div class="no-print mt-8 flex flex-wrap gap-3">
+      <a
+        href={pathFor('experience', locale)}
+        class="inline-flex min-h-11 items-center rounded-lg bg-accent px-5 font-medium text-on-accent no-underline hover:bg-accent-strong hover:text-on-accent"
+      >
+        {t.home.ctaExperience}
+      </a>
+      <a
+        href={pathFor('contact', locale)}
+        class="inline-flex min-h-11 items-center gap-2 rounded-lg border border-border px-5 font-medium text-fg no-underline hover:border-accent hover:text-accent"
+      >
+        <Icon name="mail" class="size-4" />
+        {t.home.ctaContact}
+      </a>
+    </div>
+  </section>
+
+  <section aria-labelledby="about-heading" class="border-t border-border py-12">
+    <h2 id="about-heading" class="text-2xl font-bold tracking-tight">{t.home.aboutHeading}</h2>
+    <div class="mt-4 max-w-3xl space-y-4 text-lg leading-relaxed">
+      {profile.about[locale].map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+  </section>
+
+  <section aria-labelledby="skills-heading" class="border-t border-border py-12">
+    <h2 id="skills-heading" class="text-2xl font-bold tracking-tight">{t.home.skillsHeading}</h2>
+    <div class="mt-6 grid gap-6 sm:grid-cols-2">
+      {
+        skills.map((group) => (
+          <div>
+            <h3 class="font-semibold">{group.data.name[locale]}</h3>
+            <ul class="mt-2 space-y-1 text-muted">
+              {group.data.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    featured.length > 0 && (
+      <section aria-labelledby="featured-heading" class="border-t border-border py-12">
+        <h2 id="featured-heading" class="text-2xl font-bold tracking-tight">
+          {t.home.highlightsHeading}
+        </h2>
+        <div class="mt-6 grid gap-6 md:grid-cols-2">
+          {featured.map((project) => (
+            <ProjectCard project={project} locale={locale} headingLevel="h3" />
+          ))}
+        </div>
+        <p class="no-print mt-6">
+          <a href={pathFor('projects', locale)}>{t.home.seeAllProjects}</a>
+        </p>
+      </section>
+    )
+  }
+</BaseLayout>

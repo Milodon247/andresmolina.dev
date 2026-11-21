@@ -1,0 +1,32 @@
+---
+import { render } from 'astro:content';
+import PageIntro from '@/components/cv/PageIntro.astro';
+import ProjectCard from '@/components/cv/ProjectCard.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getProjects } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const projects = await Promise.all(
+  (await getProjects(locale)).map(async (project) => ({ project, Content: (await render(project)).Content })),
+);
+---
+
+<BaseLayout title={t.meta.projects.title} description={t.meta.projects.description} locale={locale} page="projects">
+  <PageIntro heading={t.projects.heading} intro={t.projects.intro} />
+  <div class="grid gap-6">
+    {
+      projects.map(({ project, Content }) => (
+        <ProjectCard project={project} locale={locale} withBody>
+          <Content />
+        </ProjectCard>
+      ))
+    }
+  </div>
+</BaseLayout>

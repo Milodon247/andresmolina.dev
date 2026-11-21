@@ -1,0 +1,84 @@
+---
+import PageIntro from '@/components/cv/PageIntro.astro';
+import Icon from '@/components/ui/Icon.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCertifications } from '@/lib/content';
+import { formatYearMonth } from '@/lib/dates';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const certifications = await getCertifications();
+---
+
+<BaseLayout
+  title={t.meta.certifications.title}
+  description={t.meta.certifications.description}
+  locale={locale}
+  page="certifications"
+>
+  <PageIntro heading={t.certifications.heading} intro={t.certifications.intro} />
+  <ul class="grid gap-6 md:grid-cols-2">
+    {
+      certifications.map((cert) => {
+        const { name, acronym, issuer, issued, expires, credentialId, verifyUrl } = cert.data;
+        return (
+          <li>
+            <article class="flex h-full flex-col gap-3 rounded-xl border border-border bg-surface p-6">
+              <div class="flex items-start gap-3">
+                <Icon name="shield" class="mt-1 size-6 shrink-0 text-accent" />
+                <div>
+                  <h2 class="text-lg leading-snug font-semibold">
+                    {acronym ? (
+                      <>
+                        {acronym}
+                        <span class="block text-base font-normal text-muted">{name}</span>
+                      </>
+                    ) : (
+                      name
+                    )}
+                  </h2>
+                  <p class="mt-1 font-medium">{issuer}</p>
+                </div>
+              </div>
+              <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+                <dt class="text-muted">{t.certifications.issued}</dt>
+                <dd>
+                  <time datetime={issued}>{formatYearMonth(issued, locale)}</time>
+                </dd>
+                {expires && (
+                  <>
+                    <dt class="text-muted">{t.certifications.expires}</dt>
+                    <dd>
+                      <time datetime={expires}>{formatYearMonth(expires, locale)}</time>
+                    </dd>
+                  </>
+                )}
+                {credentialId && (
+                  <>
+                    <dt class="text-muted">{t.certifications.credentialId}</dt>
+                    <dd class="font-mono break-all">{credentialId}</dd>
+                  </>
+                )}
+              </dl>
+              {verifyUrl && (
+                <p class="mt-auto text-sm">
+                  <ExternalLink href={verifyUrl} locale={locale} class="inline-flex min-h-11 items-center gap-1.5">
+                    <Icon name="external" class="size-4" />
+                    {t.certifications.verify}
+                  </ExternalLink>
+                </p>
+              )}
+            </article>
+          </li>
+        );
+      })
+    }
+  </ul>
+</BaseLayout>

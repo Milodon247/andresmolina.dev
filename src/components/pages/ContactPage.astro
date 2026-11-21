@@ -1,0 +1,67 @@
+---
+import PageIntro from '@/components/cv/PageIntro.astro';
+import Icon, { type IconName } from '@/components/ui/Icon.astro';
+import ExternalLink from '@/components/ui/ExternalLink.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getProfile } from '@/lib/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const profile = await getProfile();
+
+const iconFor = (kind: string): IconName => (kind === 'github' || kind === 'linkedin' ? kind : 'link');
+---
+
+<BaseLayout title={t.meta.contact.title} description={t.meta.contact.description} locale={locale} page="contact">
+  <PageIntro heading={t.contact.heading} intro={t.contact.intro} />
+
+  <section aria-labelledby="email-heading" class="mb-10">
+    <h2 id="email-heading" class="text-sm font-semibold tracking-wide text-muted uppercase">{t.contact.email}</h2>
+    <p class="mt-2">
+      <a
+        href={`mailto:${profile.email}`}
+        class="inline-flex min-h-11 items-center gap-2 text-xl font-medium break-all md:text-2xl"
+      >
+        <Icon name="mail" class="size-6 shrink-0" />
+        {profile.email}
+      </a>
+    </p>
+  </section>
+
+  {
+    profile.links.length > 0 && (
+      <section aria-labelledby="elsewhere-heading" class="mb-10">
+        <h2 id="elsewhere-heading" class="text-sm font-semibold tracking-wide text-muted uppercase">
+          {t.contact.elsewhere}
+        </h2>
+        <ul class="mt-2 space-y-1">
+          {profile.links.map((link) => (
+            <li>
+              <ExternalLink href={link.url} locale={locale} class="inline-flex min-h-11 items-center gap-2 text-lg">
+                <Icon name={iconFor(link.kind)} class="size-5" />
+                {link.label}
+              </ExternalLink>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section aria-labelledby="security-heading" class="rounded-xl border border-border bg-surface p-6">
+    <h2 id="security-heading" class="flex items-center gap-2 text-lg font-semibold">
+      <Icon name="shield" class="size-5 text-accent" />
+      {t.contact.securityHeading}
+    </h2>
+    <p class="mt-2">
+      {t.contact.securityText}
+      <a href="/.well-known/security.txt" class="ml-1 font-mono text-sm">/.well-known/security.txt</a>
+    </p>
+  </section>
+</BaseLayout>
