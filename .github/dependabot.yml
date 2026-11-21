@@ -1,0 +1,57 @@
+# Weekly grouped updates. `cooldown` waits a few days before proposing a freshly published version,
+# so a compromised release is more likely to be caught and yanked first. Security updates are not
+# delayed by cooldown.
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Etc/UTC
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      astro:
+        patterns: ['astro', '@astrojs/*', 'tailwindcss', '@tailwindcss/*', '@fontsource-variable/*']
+      testing:
+        patterns: ['vitest', '@playwright/*', '@axe-core/*', 'html-validate', 'linkinator', '@lhci/*']
+      tooling:
+        patterns:
+          [
+            'typescript',
+            'typescript-eslint',
+            'eslint',
+            '@eslint/*',
+            'eslint-plugin-*',
+            'globals',
+            'prettier',
+            'prettier-plugin-*',
+            '@types/*',
+            'lefthook',
+          ]
+      cloudflare:
+        patterns: ['wrangler']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Etc/UTC
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ['*']
