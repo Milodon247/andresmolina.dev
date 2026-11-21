@@ -8,6 +8,7 @@
   "timeout": 15000,
   "concurrency": 10,
   "userAgent": "Mozilla/5.0 (compatible; andresmolina.dev link checker)",
+  "statusCodes": { "403": "warn" },
   "skip": [
     "^https://andresmolina\\.dev(/|$)",
     "^https://www\\.linkedin\\.com/",
