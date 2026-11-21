@@ -1,0 +1,89 @@
+# Manual rollback of production to a previous Worker version, followed by the production smoke tests.
+# Run it from Actions → Rollback → Run workflow. No Cloudflare dashboard access needed.
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_id:
+        description: Worker version ID to restore (empty = the version before the current one)
+        required: false
+        type: string
+      reason:
+        description: Why are we rolling back?
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: rollback
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    name: Roll back production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Roll back
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_SEND_METRICS: 'false'
+          VERSION_ID: ${{ inputs.version_id }}
+          REASON: ${{ inputs.reason }}
+        run: |
+          if [ -n "$VERSION_ID" ]; then
+            [[ "$VERSION_ID" =~ ^[0-9a-f-]{36}$ ]] || { echo "Invalid version id"; exit 1; }
+            npx wrangler rollback "$VERSION_ID" --message "$REASON"
+          else
+            npx wrangler rollback --message "$REASON"
+          fi
+          npx wrangler deployments status
+
+  smoke:
+    name: Smoke tests (production)
+    needs: rollback
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Run smoke tests against production
+        env:
+          BASE_URL: ${{ vars.PRODUCTION_URL }}
+        run: npm run test:smoke
