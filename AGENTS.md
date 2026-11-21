@@ -17,22 +17,40 @@ automation practices, so every change must keep those standards.
 
 ## Commands
 
-| Command           | What it does                                |
-| ----------------- | ------------------------------------------- |
-| `npm run dev`     | Dev server on `http://localhost:4321`       |
-| `npm run build`   | `astro check` + static build into `dist/`   |
-| `npm run preview` | Serve `dist/` locally                       |
-| `npm run check`   | Type-check `.astro` and `.ts` files         |
-| `npm run images`  | Regenerate PNG icons and OG image from SVGs |
+| Command                   | What it does                                                         |
+| ------------------------- | -------------------------------------------------------------------- |
+| `npm run dev`             | Dev server on `http://localhost:4321`                                |
+| `npm run build`           | `astro check` + static build into `dist/`                            |
+| `npm run preview`         | Serve `dist/` locally **with the production security headers**       |
+| `npm run typecheck`       | `astro check` + `tsc --noEmit`                                       |
+| `npm run lint`            | ESLint (TypeScript type-aware, Astro, jsx-a11y strict)               |
+| `npm run format`          | Prettier write (`format:check` to verify)                            |
+| `npm run test:unit`       | Vitest: utilities, i18n, schemas, `_headers`/CSP, security.txt, repo |
+| `npm run test:dist`       | Vitest on `dist/`: nothing inline, no third-party resources, SEO     |
+| `npm run test:html`       | html-validate on `dist/`                                             |
+| `npm run test:links`      | linkinator on `dist/` (internal + external)                          |
+| `npm run test:e2e`        | Playwright against `astro preview` (3 browser projects)              |
+| `npm run test:a11y`       | axe, WCAG 2.2 AA, every page, light and dark                         |
+| `npm run test:lighthouse` | Lighthouse CI budgets (perf ≥ 95, others = 100)                      |
+| `npm run test:all`        | Everything above, in order, stopping at the first failure            |
+| `npm run images`          | Regenerate PNG icons and OG image from SVGs                          |
+
+**Before finishing any change, run `npm run test:all`.** Tests that need the build (`test:dist`,
+`test:html`, `test:links`, `test:e2e`, `test:a11y`, `test:lighthouse`) read `dist/`, so run
+`npm run build` first when running them individually.
 
 ## Layout
 
 ```
-astro.config.ts         Astro config (static output, sitemap with hreflang, Tailwind)
+astro.config.ts         Astro config (static output, sitemap with hreflang, Tailwind, preview headers)
 design/                 SVG sources for generated images (OG image)
-scripts/                maintenance scripts (image generation)
+scripts/                maintenance scripts, commit-msg check
+scripts/lib/            shared tooling: `_headers` parser, commit message validator
 public/                 static files copied as-is (_headers, .well-known/security.txt, icons, og/)
-src/content.config.ts   content collections + Zod schemas
+tests/unit|security|repo  Vitest suites that run on sources
+tests/dist/             Vitest suite that inspects the build
+tests/e2e/              Playwright + axe suites (fixtures.ts fails on console errors/external requests)
+src/content.config.ts   content collections (schemas live in src/content/schemas.ts)
 src/content/            CV data (edit these to update the CV), one folder per collection
 src/i18n/               locales, UI dictionary, route map, helpers
 src/config/site.ts      site-wide settings (URL, author, social links)
@@ -65,9 +83,14 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
    minimum target size, sufficient contrast in both color schemes, `lang` on the document and on
    foreign-language fragments.
 8. **Dependencies:** do not add any package that the owner has not approved. Versions are pinned
-   exactly (`.npmrc` has `save-exact=true`).
+   exactly (`.npmrc` has `save-exact=true`). Dependency install scripts are blocked by npm unless
+   listed in `allowScripts`; never approve one without asking. Vulnerable transitive packages are
+   fixed with `overrides` (documented in the commit), never with `npm audit fix --force`.
 9. **No Cloudflare/deploy changes** until the owner explicitly approves Phase 3.
-10. Never commit secrets. `.env*` files are git-ignored.
+10. Never commit secrets. `.env*` files are git-ignored; gitleaks runs on every commit.
+11. **Never weaken a test to make it pass** (skip lists, thresholds, allowed errors). If a check
+    must be relaxed, ask the owner and document why next to the change.
+12. Git hooks (lefthook) must not be bypassed (`--no-verify`).
 
 ## Conventions
 
@@ -88,8 +111,17 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 
 `npm run build` fails if any entry breaks its schema or is missing a translation.
 
+## Known exceptions (documented on purpose)
+
+- `astro preview` drops `upgrade-insecure-requests` from the CSP: WebKit would otherwise rewrite
+  `http://localhost` assets to https. Production keeps it, enforced by `tests/security`.
+- `linkinator.config.json` skips linkedin.com (HTTP 999 for bots), andresmolina.dev (not live yet)
+  and the `github.com/example` placeholders (remove once real links are in `src/content`).
+- `lighthouserc.cjs` uses Playwright's `chrome-headless-shell`: some Windows policies block the
+  unsigned full Chromium binary. `CHROME_PATH` overrides it.
+
 ## Roadmap
 
-- Phase 1 (current): local site.
-- Phase 2: tests (lint, unit, e2e, axe, headers, links, HTML validation, Lighthouse, git hooks).
+- Phase 1: local site. Done.
+- Phase 2 (current): tests and git hooks.
 - Phase 3: CI/CD to Cloudflare. Only after the owner approves.
