@@ -31,12 +31,13 @@ export async function getExperience(locale: Locale): Promise<CollectionEntry<'ex
 
 export async function getProjects(locale: Locale): Promise<CollectionEntry<'projects'>[]> {
   const entries = await getLocalized('projects', locale);
-  return entries.sort((a, b) => compareYearMonthDesc(a.data.date, b.data.date));
+  // Ongoing (undated) projects first, then newest first.
+  return entries.sort((a, b) => compareYearMonthDesc(a.data.date ?? '9999-12', b.data.date ?? '9999-12'));
 }
 
 export async function getCertifications(): Promise<CollectionEntry<'certifications'>[]> {
   const entries = await getCollection('certifications');
-  return entries.sort((a, b) => compareYearMonthDesc(a.data.issued, b.data.issued));
+  return entries.sort((a, b) => a.data.order - b.data.order);
 }
 
 export async function getSkills(): Promise<CollectionEntry<'skills'>[]> {

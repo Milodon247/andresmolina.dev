@@ -46,26 +46,32 @@ const certifications = await getCertifications();
                 <p class="mt-1 font-medium">{issuer}</p>
               </div>
             </div>
-            <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-              <dt class="text-muted">{t.certifications.issued}</dt>
-              <dd>
-                <time datetime={issued}>{formatYearMonth(issued, locale)}</time>
-              </dd>
-              {expires && (
-                <>
-                  <dt class="text-muted">{t.certifications.expires}</dt>
-                  <dd>
-                    <time datetime={expires}>{formatYearMonth(expires, locale)}</time>
-                  </dd>
-                </>
-              )}
-              {credentialId && (
-                <>
-                  <dt class="text-muted">{t.certifications.credentialId}</dt>
-                  <dd class="font-mono break-all">{credentialId}</dd>
-                </>
-              )}
-            </dl>
+            {(issued || expires || credentialId) && (
+              <dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+                {issued && (
+                  <>
+                    <dt class="text-muted">{t.certifications.issued}</dt>
+                    <dd>
+                      <time datetime={issued}>{formatYearMonth(issued, locale)}</time>
+                    </dd>
+                  </>
+                )}
+                {expires && (
+                  <>
+                    <dt class="text-muted">{t.certifications.expires}</dt>
+                    <dd>
+                      <time datetime={expires}>{formatYearMonth(expires, locale)}</time>
+                    </dd>
+                  </>
+                )}
+                {credentialId && (
+                  <>
+                    <dt class="text-muted">{t.certifications.credentialId}</dt>
+                    <dd class="font-mono break-all">{credentialId}</dd>
+                  </>
+                )}
+              </dl>
+            )}
             {verifyUrl && (
               <p class="mt-auto text-sm">
                 <ExternalLink

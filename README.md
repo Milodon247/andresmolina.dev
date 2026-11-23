@@ -44,14 +44,18 @@ npm run dev                              # http://localhost:4321
 | `npm run dev`        | Development server with hot reload                           |
 | `npm run build`      | Type-check (`astro check`) and build into `dist/`            |
 | `npm run preview`    | Serve the production build locally with the security headers |
-| `npm run test:all`   | Run every check and test (see [Testing](#testing))           |
+| `npm run test:all`   | Run every check and test (see [Testing](#testing)), ~9 min   |
+| `npm run test:quick` | Fast local loop: typecheck, lint, format, unit, build, dist  |
 | `npm run test:smoke` | Smoke tests against a deployed URL (`BASE_URL=https://…`)    |
 | `npm run format`     | Format the code with Prettier                                |
 | `npm run images`     | Regenerate icons and the OG image from their SVG sources     |
 
 ## Testing
 
-`npm run test:all` runs every step below in order and stops at the first failure.
+`npm run test:all` runs every step below in order and stops at the first failure. It takes about
+9 minutes, mostly Lighthouse (10 pages × 3 runs). For day-to-day edits, `npm run test:quick` runs
+the first five steps plus `test:dist` in 1–2 minutes; CI always runs the full suite on every pull
+request and before every deployment.
 
 | Step              | Tool                          | What it guarantees                                                                                                         |
 | ----------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |

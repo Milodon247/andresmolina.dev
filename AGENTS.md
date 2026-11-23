@@ -32,11 +32,15 @@ automation practices, so every change must keep those standards.
 | `npm run test:e2e`        | Playwright against `astro preview` (3 browser projects)               |
 | `npm run test:a11y`       | axe, WCAG 2.2 AA, every page, light and dark                          |
 | `npm run test:lighthouse` | Lighthouse CI budgets (perf ≥ 95, others = 100)                       |
-| `npm run test:all`        | Everything above, in order, stopping at the first failure             |
+| `npm run test:all`        | Everything above, in order, stopping at the first failure (~9 min)    |
+| `npm run test:quick`      | typecheck, lint, format, unit, build, dist checks (~1–2 min)          |
 | `npm run test:smoke`      | Smoke tests against a deployed URL (`BASE_URL=https://…`), used by CI |
 | `npm run images`          | Regenerate PNG icons and OG image from SVGs                           |
 
-**Before finishing any change, run `npm run test:all`.** Tests that need the build (`test:dist`,
+**Before finishing any change, run at least `npm run test:quick`.** CI runs the full `test:all` on
+every pull request and before every deployment, and nothing merges without it. Run `test:all`
+locally at the end of a phase and for changes to layout, styles, headers or tests. Tests that need
+the build (`test:dist`,
 `test:html`, `test:links`, `test:e2e`, `test:a11y`, `test:lighthouse`) read `dist/`, so run
 `npm run build` first when running them individually.
 
@@ -133,9 +137,8 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 
 - `astro preview` drops `upgrade-insecure-requests` from the CSP: WebKit would otherwise rewrite
   `http://localhost` assets to https. Production keeps it, enforced by `tests/security`.
-- `linkinator.config.json` skips linkedin.com (HTTP 999 for bots), andresmolina.dev (not live yet)
-  and the `github.com/example` profile placeholder (remove once the real GitHub link is in
-  `src/content/profile/profile.json`). HTTP 403 is reported as a warning, not a failure: github.com
+- `linkinator.config.json` skips linkedin.com (HTTP 999 for bots) and andresmolina.dev (not live
+  yet). HTTP 403 is reported as a warning, not a failure: github.com
   answers 403 to requests from GitHub Actions runners while the page exists. 404s and connection
   errors still fail the check.
 - `lighthouserc.cjs` uses Playwright's `chrome-headless-shell`: some Windows policies block the

@@ -21,7 +21,7 @@ const technologies = z.array(z.string().trim().min(1)).default([]);
 export const profileSchema = z.object({
   name: z.string().trim().min(1),
   headline: localized,
-  location: localized,
+  location: localized.optional(),
   summary: localized,
   about: z.object({
     en: z.array(z.string().trim().min(1)).min(1),
@@ -44,7 +44,7 @@ export const experienceSchema = z
     role: z.string().trim().min(1),
     company: z.string().trim().min(1),
     companyUrl: httpsUrl.optional(),
-    location: z.string().trim().min(1),
+    location: z.string().trim().min(1).optional(),
     start: yearMonth,
     // Omit `end` for the current role.
     end: yearMonth.optional(),
@@ -58,30 +58,36 @@ export const experienceSchema = z
 export const projectSchema = z.object({
   title: z.string().trim().min(1),
   summary: z.string().trim().min(1).max(200),
-  date: yearMonth,
+  // Omit `date` for ongoing work: undated projects are listed first.
+  date: yearMonth.optional(),
   featured: z.boolean().default(false),
   repoUrl: httpsUrl.optional(),
   siteUrl: httpsUrl.optional(),
   technologies,
 });
 
+/** Certifications are listed by `order` (most relevant first); dates are optional. */
 export const certificationSchema = z
   .object({
+    order: z.number().int().nonnegative(),
     name: z.string().trim().min(1),
     acronym: z.string().trim().min(1).optional(),
     issuer: z.string().trim().min(1),
-    issued: yearMonth,
+    issued: yearMonth.optional(),
     expires: yearMonth.optional(),
     credentialId: z.string().trim().min(1).optional(),
     verifyUrl: httpsUrl.optional(),
   })
-  .refine((c) => c.expires === undefined || c.expires >= c.issued, {
+  .refine((c) => c.expires === undefined || c.issued === undefined || c.expires >= c.issued, {
     message: '`expires` must not be before `issued`',
     path: ['expires'],
   });
 
+/** A skill is either a language-neutral term ("Terraform") or a phrase translated per locale. */
+const skillItem = z.union([z.string().trim().min(1), localized]);
+
 export const skillGroupSchema = z.object({
   order: z.number().int().nonnegative(),
   name: localized,
-  items: z.array(z.string().trim().min(1)).min(1),
+  items: z.array(skillItem).min(1),
 });
