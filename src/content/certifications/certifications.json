@@ -1,34 +1,56 @@
 [
   {
     "id": "cissp",
+    "order": 1,
     "name": "Certified Information Systems Security Professional",
     "acronym": "CISSP",
     "issuer": "ISC2",
-    "issued": "2023-06",
-    "expires": "2029-06",
-    "credentialId": "000000",
     "verifyUrl": "https://www.isc2.org/MemberVerification"
   },
   {
-    "id": "example-cloud-security",
-    "name": "Example Cloud Security Certification",
-    "issuer": "Example Cloud Provider",
-    "issued": "2022-09",
-    "expires": "2025-09",
-    "credentialId": "EXAMPLE-123"
+    "id": "azure-security-engineer",
+    "order": 2,
+    "name": "Microsoft Certified: Azure Security Engineer Associate",
+    "issuer": "Microsoft"
   },
   {
-    "id": "example-kubernetes-security",
-    "name": "Example Kubernetes Security Specialist",
-    "acronym": "EKSS",
-    "issuer": "Example Foundation",
-    "issued": "2021-11",
-    "expires": "2023-11"
+    "id": "azure-network-engineer",
+    "order": 3,
+    "name": "Microsoft Certified: Azure Network Engineer Associate",
+    "issuer": "Microsoft"
   },
   {
-    "id": "example-devops-foundation",
-    "name": "Example DevOps Foundation",
-    "issuer": "Example Institute",
-    "issued": "2020-04"
+    "id": "pcnsa",
+    "order": 4,
+    "name": "Palo Alto Networks Certified Network Security Administrator",
+    "acronym": "PCNSA",
+    "issuer": "Palo Alto Networks"
+  },
+  {
+    "id": "ccse",
+    "order": 5,
+    "name": "Check Point Certified Security Expert",
+    "acronym": "CCSE",
+    "issuer": "Check Point"
+  },
+  {
+    "id": "cccs",
+    "order": 6,
+    "name": "Check Point Certified Cloud Specialist",
+    "acronym": "CCCS",
+    "issuer": "Check Point"
+  },
+  {
+    "id": "check-point-cloud-network-security-azure",
+    "order": 7,
+    "name": "Check Point Certified Cloud Network Security Expert – Azure",
+    "issuer": "Check Point"
+  },
+  {
+    "id": "python-essentials-2",
+    "order": 8,
+    "name": "Python Essentials 2",
+    "acronym": "PCAP",
+    "issuer": "Python Institute"
   }
 ]

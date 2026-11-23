@@ -9,9 +9,5 @@
   "concurrency": 10,
   "userAgent": "Mozilla/5.0 (compatible; andresmolina.dev link checker)",
   "statusCodes": { "403": "warn" },
-  "skip": [
-    "^https://andresmolina\\.dev(/|$)",
-    "^https://www\\.linkedin\\.com/",
-    "^https://github\\.com/example(/|$)"
-  ]
+  "skip": ["^https://andresmolina\\.dev(/|$)", "^https://www\\.linkedin\\.com/"]
 }

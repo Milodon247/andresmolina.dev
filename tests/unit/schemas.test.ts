@@ -56,6 +56,11 @@ describe('projectSchema', () => {
     expect(projectSchema.parse(valid).featured).toBe(false);
   });
 
+  it('accepts an ongoing project without date but validates a date when present', () => {
+    expect(projectSchema.safeParse({ title: 'Site', summary: 'Short summary' }).success).toBe(true);
+    expect(projectSchema.safeParse({ ...valid, date: '2026-13' }).success).toBe(false);
+  });
+
   it('limits the summary to 200 characters', () => {
     expect(projectSchema.safeParse({ ...valid, summary: 'x'.repeat(201) }).success).toBe(false);
   });
@@ -67,7 +72,7 @@ describe('projectSchema', () => {
 });
 
 describe('certificationSchema', () => {
-  const valid = { name: 'CISSP', issuer: 'ISC2', issued: '2023-06' };
+  const valid = { order: 1, name: 'CISSP', issuer: 'ISC2', issued: '2023-06' };
 
   it('accepts a certification without expiry', () => {
     expect(certificationSchema.safeParse(valid).success).toBe(true);
@@ -75,6 +80,26 @@ describe('certificationSchema', () => {
 
   it('rejects an expiry before the issue date', () => {
     expect(certificationSchema.safeParse({ ...valid, expires: '2023-05' }).success).toBe(false);
+  });
+
+  it('accepts a certification without dates but still validates them when present', () => {
+    expect(certificationSchema.safeParse({ order: 1, name: 'CISSP', issuer: 'ISC2' }).success).toBe(true);
+    expect(
+      certificationSchema.safeParse({ order: 1, name: 'CISSP', issuer: 'ISC2', issued: '2023-6' }).success,
+    ).toBe(false);
+  });
+});
+
+describe('skillGroupSchema', () => {
+  const group = { order: 1, name: { en: 'Cloud', es: 'Cloud' } };
+
+  it('accepts language-neutral terms and translated phrases', () => {
+    const items = ['Terraform', { en: 'Policy as code', es: 'Políticas como código' }];
+    expect(skillGroupSchema.safeParse({ ...group, items }).success).toBe(true);
+  });
+
+  it('rejects a phrase missing one language', () => {
+    expect(skillGroupSchema.safeParse({ ...group, items: [{ en: 'Policy as code' }] }).success).toBe(false);
   });
 });
 
