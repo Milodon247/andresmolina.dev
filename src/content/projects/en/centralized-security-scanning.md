@@ -1,8 +1,8 @@
 ---
 title: Centralized security scanning for 800+ GitHub repositories
-summary: Centralized SCA, SAST, DAST and IaC scanning across more than 800 GitHub repositories with OpenGrep, Trivy, Grype, Syft and OWASP ZAP, plus GitHub Advanced Security.
+summary: Centralized SCA, SAST, DAST and IaC scanning across more than 800 GitHub repositories, with every finding consolidated in DefectDojo as the ASPM platform.
 featured: true
-technologies: [OpenGrep, Trivy, Grype, Syft, OWASP ZAP, GitHub Advanced Security]
+technologies: [DefectDojo, OpenGrep, Trivy, Grype, Syft, OWASP ZAP, GitHub Advanced Security]
 ---
 
 Instead of configuring scanners repository by repository, scanning is defined once and applied
@@ -14,3 +14,7 @@ centrally to more than 800 GitHub repositories:
 - **IaC**: security misconfigurations in infrastructure-as-code definitions with **Trivy**.
 - **DAST**: dynamic testing of running applications with **OWASP ZAP**.
 - **Secret detection**: **GitHub Advanced Security** secret scanning.
+
+All scanner results are consolidated in **DefectDojo**, used as the ASPM (application security
+posture management) platform: a single place to review, deduplicate, prioritize and track findings
+across every repository.
