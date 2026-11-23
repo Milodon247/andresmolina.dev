@@ -42,7 +42,7 @@ const structuredData = {
       {profile.name}
     </h1>
     <p class="mt-3 text-xl font-medium text-accent">{profile.headline[locale]}</p>
-    <p class="mt-1 text-muted">{profile.location[locale]}</p>
+    {profile.location && <p class="mt-1 text-muted">{profile.location[locale]}</p>}
     <p class="mt-6 max-w-2xl text-lg leading-relaxed">{profile.summary[locale]}</p>
     <div class="no-print mt-8 flex flex-wrap gap-3">
       <a
@@ -82,7 +82,7 @@ const structuredData = {
           <h3 class="font-semibold">{group.data.name[locale]}</h3>
           <ul class="mt-2 space-y-1 text-muted">
             {group.data.items.map((item) => (
-              <li>{item}</li>
+              <li>{typeof item === 'string' ? item : item[locale]}</li>
             ))}
           </ul>
         </div>

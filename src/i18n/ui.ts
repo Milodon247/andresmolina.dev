@@ -108,7 +108,7 @@ const en: UiStrings = {
   },
   certifications: {
     heading: 'Certifications',
-    intro: 'Professional certifications, most recent first.',
+    intro: 'Professional certifications in security, cloud and networking.',
     issued: 'Issued',
     expires: 'Expires',
     credentialId: 'Credential ID',
@@ -193,7 +193,7 @@ const es: UiStrings = {
   },
   certifications: {
     heading: 'Certificaciones',
-    intro: 'Certificaciones profesionales, de la más reciente a la más antigua.',
+    intro: 'Certificaciones profesionales en seguridad, cloud y redes.',
     issued: 'Emitida',
     expires: 'Vence',
     credentialId: 'ID de credencial',

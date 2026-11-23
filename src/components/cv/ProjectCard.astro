@@ -24,9 +24,11 @@ const t = useTranslations(locale);
 <article class="flex flex-col gap-4 rounded-xl border border-border bg-surface p-6">
   <div>
     <Heading class="text-xl font-semibold tracking-tight">{title}</Heading>
-    <p class="mt-1 text-sm text-muted">
-      <time datetime={date}>{formatYearMonth(date, locale)}</time>
-    </p>
+    {date && (
+      <p class="mt-1 text-sm text-muted">
+        <time datetime={date}>{formatYearMonth(date, locale)}</time>
+      </p>
+    )}
   </div>
   <p class="leading-relaxed">{summary}</p>
   {withBody && (

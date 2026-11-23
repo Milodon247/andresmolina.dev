@@ -6,28 +6,28 @@
       "en": "DevSecOps Architect · CISSP",
       "es": "Arquitecto DevSecOps · CISSP"
     },
-    "location": {
-      "en": "Placeholder City, Country",
-      "es": "Ciudad de ejemplo, País"
-    },
     "summary": {
-      "en": "Placeholder summary: I design secure delivery platforms where security, quality and automation are built into every step, from commit to production.",
-      "es": "Resumen de ejemplo: diseño plataformas de entrega seguras donde la seguridad, la calidad y la automatización forman parte de cada paso, desde el commit hasta producción."
+      "en": "Security professional with 10 years of IT and cybersecurity experience across AWS and Azure. I build security into the software delivery lifecycle, from the first commit to production.",
+      "es": "Profesional de seguridad con 10 años de experiencia en TI y ciberseguridad en AWS y Azure. Integro la seguridad en todo el ciclo de entrega de software, desde el primer commit hasta producción."
     },
     "about": {
       "en": [
-        "Placeholder paragraph. Describe your background, the kind of teams you have worked with and the problems you enjoy solving.",
-        "Placeholder paragraph. Explain your approach: shifting security left, policy as code, supply-chain security and measurable risk reduction."
+        "I have spent 10 years in IT and cybersecurity across AWS and Azure cloud environments, incident response and security governance. I have been the escalation point for major security incidents, led investigations, and driven SOC, IAM and compliance improvements (ISO 27001, SOX) together with senior leadership.",
+        "Today I work as a DevSecOps architect: security as code across CI/CD pipelines, Terraform landing zones and policy-as-code guardrails, so that security is a property of the platform rather than a late review. CISSP, with hands-on experience in cloud security architecture, vulnerability management, security awareness programs and regulatory compliance."
       ],
       "es": [
-        "Párrafo de ejemplo. Describe tu trayectoria, el tipo de equipos con los que has trabajado y los problemas que disfrutas resolver.",
-        "Párrafo de ejemplo. Explica tu enfoque: llevar la seguridad al inicio del ciclo, políticas como código, seguridad de la cadena de suministro y reducción medible del riesgo."
+        "Llevo 10 años en TI y ciberseguridad, en entornos cloud de AWS y Azure, respuesta a incidentes y gobierno de la seguridad. He sido el punto de escalamiento de incidentes de seguridad graves, he liderado investigaciones y he impulsado mejoras de SOC, IAM y cumplimiento normativo (ISO 27001, SOX) junto a la alta dirección.",
+        "Hoy trabajo como arquitecto DevSecOps: seguridad como código en los pipelines de CI/CD, landing zones con Terraform y controles de políticas como código, para que la seguridad sea una propiedad de la plataforma y no una revisión tardía. CISSP, con experiencia práctica en arquitectura de seguridad cloud, gestión de vulnerabilidades, programas de concienciación y cumplimiento normativo."
       ]
     },
     "email": "hello@andresmolina.dev",
     "links": [
-      { "kind": "github", "label": "GitHub", "url": "https://github.com/example" },
-      { "kind": "linkedin", "label": "LinkedIn", "url": "https://www.linkedin.com/in/example" }
+      {
+        "kind": "linkedin",
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/in/andres-molina-bustamante"
+      },
+      { "kind": "github", "label": "GitHub", "url": "https://github.com/Milodon247" }
     ]
   }
 ]

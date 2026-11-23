@@ -48,7 +48,7 @@ const jobs = await Promise.all(
                 ) : (
                   company
                 )}
-                <span class="text-muted"> · {location}</span>
+                {location && <span class="text-muted"> · {location}</span>}
               </p>
               <p class="text-sm text-muted">
                 <time datetime={start}>{formatYearMonth(start, locale)}</time>
