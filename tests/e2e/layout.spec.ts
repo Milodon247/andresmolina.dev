@@ -15,6 +15,28 @@ for (const scheme of ['light', 'dark'] as const) {
   });
 }
 
+for (const scheme of ['light', 'dark'] as const) {
+  const other = scheme === 'light' ? 'dark' : 'light';
+
+  test(`the theme switch turns a ${scheme} system page ${other}, by click and by keyboard`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.goto('/');
+    const body = page.locator('body');
+    const toggle = page.getByRole('checkbox', { name: /light and dark|claro y oscuro/ });
+
+    await page.locator('label[for="theme-toggle"]').click();
+    await expect(toggle).toBeChecked();
+    await expect(body).toHaveCSS('background-color', backgrounds[other]);
+
+    await toggle.focus();
+    await page.keyboard.press('Space');
+    await expect(toggle).not.toBeChecked();
+    await expect(body).toHaveCSS('background-color', backgrounds[scheme]);
+  });
+}
+
 for (const { path } of sitePages) {
   test(`${path} has no horizontal overflow`, async ({ page }) => {
     await page.goto(path);

@@ -91,7 +91,7 @@ describe('certificationSchema', () => {
 });
 
 describe('skillGroupSchema', () => {
-  const group = { order: 1, name: { en: 'Cloud', es: 'Cloud' } };
+  const group = { order: 1, name: { en: 'Cloud', es: 'Cloud' }, icon: 'cloud', items: ['AWS'] };
 
   it('accepts language-neutral terms and translated phrases', () => {
     const items = ['Terraform', { en: 'Policy as code', es: 'Políticas como código' }];
@@ -100,6 +100,18 @@ describe('skillGroupSchema', () => {
 
   it('rejects a phrase missing one language', () => {
     expect(skillGroupSchema.safeParse({ ...group, items: [{ en: 'Policy as code' }] }).success).toBe(false);
+  });
+
+  it('requires a known category icon', () => {
+    expect(skillGroupSchema.safeParse({ ...group, icon: 'rocket' }).success).toBe(false);
+    expect(skillGroupSchema.safeParse({ ...group, icon: undefined }).success).toBe(false);
+  });
+
+  it('defaults tools to none and only accepts Simple Icons slugs as brand', () => {
+    expect(skillGroupSchema.parse(group).tools).toEqual([]);
+    const tools = (brand: string) => ({ ...group, tools: [{ name: 'Terraform', brand }] });
+    expect(skillGroupSchema.safeParse(tools('terraform')).success).toBe(true);
+    expect(skillGroupSchema.safeParse(tools('../terraform')).success).toBe(false);
   });
 });
 

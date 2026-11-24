@@ -1,0 +1,31 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+
+/**
+ * Light/dark switch without JavaScript: a native checkbox that global.css reads with
+ * `:root:has(#theme-toggle:checked)` to apply the scheme opposite to the system one. The choice is
+ * not remembered across pages (that would need JavaScript or a cookie); every page starts from the
+ * system preference.
+ */
+interface Props {
+  locale: Locale;
+  class?: string;
+}
+
+const { locale, class: className } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<span class:list={['inline-flex', className]}>
+  <input id="theme-toggle" type="checkbox" class="peer sr-only" />
+  <label
+    for="theme-toggle"
+    class="inline-flex size-11 cursor-pointer items-center justify-center rounded-full border border-border text-fg transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent hover:border-accent hover:bg-surface hover:text-accent"
+  >
+    <Icon name="moon" class="theme-toggle-moon size-5" />
+    <Icon name="sun" class="theme-toggle-sun size-5" />
+    <span class="sr-only">{t.themeToggle}</span>
+  </label>
+</span>

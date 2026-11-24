@@ -1,5 +1,6 @@
 import { z } from 'astro/zod';
 import { YEAR_MONTH } from '@/lib/dates';
+import { iconNames } from '@/lib/icons';
 
 /**
  * Zod schemas for every content collection. Kept free of `astro:content` so unit tests can import
@@ -22,6 +23,8 @@ export const profileSchema = z.object({
   name: z.string().trim().min(1),
   headline: localized,
   location: localized.optional(),
+  /** Spoken languages and level, shown under the headline, e.g. { en: 'English (C1)', es: 'Inglés (C1)' }. */
+  languages: z.array(localized).default([]),
   summary: localized,
   about: z.object({
     en: z.array(z.string().trim().min(1)).min(1),
@@ -86,8 +89,22 @@ export const certificationSchema = z
 /** A skill is either a language-neutral term ("Terraform") or a phrase translated per locale. */
 const skillItem = z.union([z.string().trim().min(1), localized]);
 
+/**
+ * A tool shown in the logo carousel. `brand` is a slug in `src/icons/brands/` (the build fails if it
+ * does not exist); without it, the tool is shown with the group's icon.
+ */
+const toolSchema = z.object({
+  name: z.string().trim().min(1),
+  brand: z
+    .string()
+    .regex(/^[a-z0-9]+$/, 'Use a Simple Icons slug, e.g. terraform')
+    .optional(),
+});
+
 export const skillGroupSchema = z.object({
   order: z.number().int().nonnegative(),
   name: localized,
+  icon: z.enum(iconNames),
   items: z.array(skillItem).min(1),
+  tools: z.array(toolSchema).default([]),
 });

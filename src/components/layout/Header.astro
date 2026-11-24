@@ -4,6 +4,7 @@ import type { Locale } from '@/i18n/config';
 import { pageKeys, pathFor, type PageKey } from '@/i18n/routes';
 import { useTranslations } from '@/i18n/ui';
 import LanguageSwitcher from './LanguageSwitcher.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
   locale: Locale;
@@ -40,6 +41,9 @@ const t = useTranslations(locale);
         ))}
       </ul>
     </nav>
-    <LanguageSwitcher locale={locale} page={page} class="no-print justify-self-end" />
+    <div class="no-print flex items-center gap-2 justify-self-end">
+      <ThemeToggle locale={locale} />
+      <LanguageSwitcher locale={locale} page={page} />
+    </div>
   </div>
 </header>

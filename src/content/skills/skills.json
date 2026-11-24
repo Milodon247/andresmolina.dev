@@ -2,40 +2,134 @@
   {
     "id": "devsecops-iac",
     "order": 1,
-    "name": { "en": "DevSecOps & infrastructure as code", "es": "DevSecOps e infraestructura como código" },
+    "name": {
+      "en": "DevSecOps & infrastructure as code",
+      "es": "DevSecOps e infraestructura como código"
+    },
+    "icon": "code",
     "items": [
       "Terraform",
       "Git",
       "Azure DevOps, GitHub Actions, GitLab CI",
       "Docker, Kubernetes",
-      { "en": "Policy as code", "es": "Políticas como código" },
+      {
+        "en": "Policy as code",
+        "es": "Políticas como código"
+      },
       "REST APIs, Postman"
+    ],
+    "tools": [
+      {
+        "name": "Terraform",
+        "brand": "terraform"
+      },
+      {
+        "name": "Git",
+        "brand": "git"
+      },
+      {
+        "name": "GitHub Actions",
+        "brand": "githubactions"
+      },
+      {
+        "name": "GitLab CI",
+        "brand": "gitlab"
+      },
+      {
+        "name": "Azure DevOps"
+      },
+      {
+        "name": "Docker",
+        "brand": "docker"
+      },
+      {
+        "name": "Kubernetes",
+        "brand": "kubernetes"
+      },
+      {
+        "name": "Postman",
+        "brand": "postman"
+      }
     ]
   },
   {
     "id": "cloud-platforms",
     "order": 2,
-    "name": { "en": "Cloud & platforms", "es": "Cloud y plataformas" },
-    "items": ["AWS", "Azure", "Microsoft 365", "Microsoft Entra ID (Azure AD)"]
+    "name": {
+      "en": "Cloud & platforms",
+      "es": "Cloud y plataformas"
+    },
+    "icon": "cloud",
+    "items": ["AWS", "Azure", "Microsoft 365", "Microsoft Entra ID (Azure AD)"],
+    "tools": [
+      {
+        "name": "AWS"
+      },
+      {
+        "name": "Azure"
+      },
+      {
+        "name": "Microsoft 365"
+      },
+      {
+        "name": "Microsoft Entra ID"
+      }
+    ]
   },
   {
     "id": "security-domains",
     "order": 3,
-    "name": { "en": "Security domains", "es": "Dominios de seguridad" },
+    "name": {
+      "en": "Security domains",
+      "es": "Dominios de seguridad"
+    },
+    "icon": "shield",
     "items": [
-      { "en": "Cloud security architecture", "es": "Arquitectura de seguridad cloud" },
+      {
+        "en": "Cloud security architecture",
+        "es": "Arquitectura de seguridad cloud"
+      },
       "IAM, Zero Trust",
-      { "en": "Workload and container security", "es": "Seguridad de cargas de trabajo y contenedores" },
+      {
+        "en": "Workload and container security",
+        "es": "Seguridad de cargas de trabajo y contenedores"
+      },
       {
         "en": "Vulnerability management (NIST SP 800-40r4)",
         "es": "Gestión de vulnerabilidades (NIST SP 800-40r4)"
       },
       "SIEM, EDR, SASE, DLP, CASB",
-      { "en": "MDM and endpoint compliance", "es": "MDM y cumplimiento de endpoints" },
-      { "en": "Email security", "es": "Seguridad del correo electrónico" },
+      {
+        "en": "MDM and endpoint compliance",
+        "es": "MDM y cumplimiento de endpoints"
+      },
+      {
+        "en": "Email security",
+        "es": "Seguridad del correo electrónico"
+      },
       {
         "en": "Security awareness and phishing simulation",
         "es": "Concienciación en seguridad y simulación de phishing"
+      }
+    ],
+    "tools": [
+      {
+        "name": "Palo Alto Networks",
+        "brand": "paloaltonetworks"
+      },
+      {
+        "name": "Fortinet",
+        "brand": "fortinet"
+      },
+      {
+        "name": "Cloudflare",
+        "brand": "cloudflare"
+      },
+      {
+        "name": "Microsoft Sentinel"
+      },
+      {
+        "name": "Netskope"
       }
     ]
   },
@@ -46,9 +140,16 @@
       "en": "Security operations & incident response",
       "es": "Operaciones de seguridad y respuesta a incidentes"
     },
+    "icon": "alert",
     "items": [
-      { "en": "SOC operations", "es": "Operaciones de SOC" },
-      { "en": "Major incident response", "es": "Respuesta a incidentes graves" },
+      {
+        "en": "SOC operations",
+        "es": "Operaciones de SOC"
+      },
+      {
+        "en": "Major incident response",
+        "es": "Respuesta a incidentes graves"
+      },
       {
         "en": "Digital forensics and evidence collection",
         "es": "Análisis forense digital y recopilación de evidencias"
@@ -57,27 +158,92 @@
         "en": "Investigations: phishing, data leakage, unauthorized access",
         "es": "Investigaciones: phishing, fuga de datos, accesos no autorizados"
       },
-      { "en": "Post-incident reporting", "es": "Informes post-incidente" }
+      {
+        "en": "Post-incident reporting",
+        "es": "Informes post-incidente"
+      }
+    ],
+    "tools": [
+      {
+        "name": "PagerDuty",
+        "brand": "pagerduty"
+      }
     ]
   },
   {
     "id": "automation",
     "order": 5,
-    "name": { "en": "Automation & scripting", "es": "Automatización y scripting" },
+    "name": {
+      "en": "Automation & scripting",
+      "es": "Automatización y scripting"
+    },
+    "icon": "terminal",
     "items": [
       "Python",
       "PowerShell",
       "Power Automate",
-      { "en": "Jira / ITSM integrations", "es": "Integraciones con Jira / ITSM" }
+      {
+        "en": "Jira / ITSM integrations",
+        "es": "Integraciones con Jira / ITSM"
+      }
+    ],
+    "tools": [
+      {
+        "name": "Python",
+        "brand": "python"
+      },
+      {
+        "name": "PowerShell"
+      },
+      {
+        "name": "Power Automate"
+      },
+      {
+        "name": "Jira",
+        "brand": "jira"
+      }
+    ]
+  },
+  {
+    "id": "ai-engineering",
+    "order": 6,
+    "name": {
+      "en": "AI-assisted engineering",
+      "es": "Ingeniería asistida por IA"
+    },
+    "icon": "sparkles",
+    "items": ["Claude Code", "Cursor", "GitHub Copilot"],
+    "tools": [
+      {
+        "name": "Claude Code",
+        "brand": "claude"
+      },
+      {
+        "name": "Cursor",
+        "brand": "cursor"
+      },
+      {
+        "name": "GitHub Copilot",
+        "brand": "githubcopilot"
+      }
     ]
   },
   {
     "id": "governance",
-    "order": 6,
-    "name": { "en": "Compliance & governance", "es": "Cumplimiento y gobierno" },
+    "order": 7,
+    "name": {
+      "en": "Compliance & governance",
+      "es": "Cumplimiento y gobierno"
+    },
+    "icon": "scale",
     "items": [
       "ISO 27001 (Annex A)",
       "SOX (ITGC)",
+      "PCI DSS",
+      {
+        "en": "GDPR",
+        "es": "RGPD (GDPR)"
+      },
       {
         "en": "Security policy and standards development",
         "es": "Desarrollo de políticas y estándares de seguridad"
