@@ -139,12 +139,9 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 
 - `astro preview` drops `upgrade-insecure-requests` from the CSP: WebKit would otherwise rewrite
   `http://localhost` assets to https. Production keeps it, enforced by `tests/security`.
-- `linkinator.config.json` skips linkedin.com (HTTP 999 for bots) and andresmolina.dev. The domain
-  skip must stay until the domain is live: links run in the checks that gate the very deploy that
-  attaches it. Remove it in a follow-up PR once `https://andresmolina.dev` answers. HTTP 403 is
-  reported as a warning, not a failure: github.com
-  answers 403 to requests from GitHub Actions runners while the page exists. 404s and connection
-  errors still fail the check.
+- `linkinator.config.json` skips linkedin.com (HTTP 999 for bots). HTTP 403 is reported as a
+  warning, not a failure: github.com answers 403 to requests from GitHub Actions runners while the
+  page exists. 404s and connection errors still fail the check.
 - `lighthouserc.cjs` uses Playwright's `chrome-headless-shell`: some Windows policies block the
   unsigned full Chromium binary. `CHROME_PATH` overrides it.
 
@@ -154,5 +151,5 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 - Phase 2: tests and git hooks. Done.
 - Phase 3: CI/CD to Cloudflare Workers Static Assets. Done.
 - Phase 4 (current): custom domain `andresmolina.dev`. HSTS preload needs no submission (the
-  `.dev` TLD is preloaded). Pending: www → apex redirect rule, remove the link-check skip, verify
-  securityheaders.com / Mozilla Observatory grades.
+  `.dev` TLD is preloaded). `www` → apex is a Cloudflare Single Redirect rule (301, path and query
+  kept), managed in the dashboard. securityheaders.com and Mozilla Observatory: A+ (2026-11-24).
