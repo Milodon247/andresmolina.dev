@@ -13,7 +13,9 @@ automation practices, so every change must keep those standards.
 - Astro 7, `output: 'static'`, TypeScript `strictest`, Tailwind CSS 4 (via `@tailwindcss/vite`).
 - Node `>=22.23.4` (`.nvmrc` = 26). npm only, `package-lock.json` committed, `npm ci` in CI.
 - Bilingual: English is the default locale (no prefix, `/`), Spanish lives under `/es/`.
-- Deployment target: Cloudflare (Phase 3, not configured yet).
+- Deployment: Cloudflare Workers Static Assets on `andresmolina.dev` and `www.andresmolina.dev`
+  (custom domains in `wrangler.jsonc`), only from GitHub Actions. Production URL: `PRODUCTION_URL`
+  in `deploy.yml` / `rollback.yml`.
 
 ## Commands
 
@@ -137,8 +139,10 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 
 - `astro preview` drops `upgrade-insecure-requests` from the CSP: WebKit would otherwise rewrite
   `http://localhost` assets to https. Production keeps it, enforced by `tests/security`.
-- `linkinator.config.json` skips linkedin.com (HTTP 999 for bots) and andresmolina.dev (not live
-  yet). HTTP 403 is reported as a warning, not a failure: github.com
+- `linkinator.config.json` skips linkedin.com (HTTP 999 for bots) and andresmolina.dev. The domain
+  skip must stay until the domain is live: links run in the checks that gate the very deploy that
+  attaches it. Remove it in a follow-up PR once `https://andresmolina.dev` answers. HTTP 403 is
+  reported as a warning, not a failure: github.com
   answers 403 to requests from GitHub Actions runners while the page exists. 404s and connection
   errors still fail the check.
 - `lighthouserc.cjs` uses Playwright's `chrome-headless-shell`: some Windows policies block the
@@ -148,5 +152,7 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 
 - Phase 1: local site. Done.
 - Phase 2: tests and git hooks. Done.
-- Phase 3 (current): CI/CD to Cloudflare Workers Static Assets.
-- Next: custom domain `andresmolina.dev` (owner approval needed), then HSTS preload submission.
+- Phase 3: CI/CD to Cloudflare Workers Static Assets. Done.
+- Phase 4 (current): custom domain `andresmolina.dev`. HSTS preload needs no submission (the
+  `.dev` TLD is preloaded). Pending: www → apex redirect rule, remove the link-check skip, verify
+  securityheaders.com / Mozilla Observatory grades.

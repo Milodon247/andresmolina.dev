@@ -11,8 +11,9 @@ The site doubles as a technical showcase: it is fully static, bilingual (English
 **zero client-side JavaScript**, loads nothing from third-party origins and is served with a strict
 Content Security Policy and hardened security headers.
 
-> Status: **Phase 3 (CI/CD)**. Every change goes through a pull request, the full test suite, a
-> Cloudflare preview with smoke tests, and is deployed to production by GitHub Actions only.
+> Status: **Phase 4 (custom domain)**, live at <https://andresmolina.dev>. Every change goes
+> through a pull request, the full test suite, a Cloudflare preview with smoke tests, and is
+> deployed to production by GitHub Actions only.
 
 ## Stack
 
@@ -184,14 +185,15 @@ Create it in **Cloudflare dashboard → My Profile → API Tokens → Create Tok
 
 | Field               | Value                                                                                                         |
 | ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Permissions         | **Account → Workers Scripts → Edit** (nothing else)                                                           |
+| Permissions         | **Account → Workers Scripts → Edit** and **Zone → Workers Routes → Edit** (nothing else)                      |
 | Account Resources   | **Include → your account** only                                                                               |
+| Zone Resources      | **Include → Specific zone → `andresmolina.dev`** only                                                         |
 | Client IP filtering | Leave empty: GitHub-hosted runners have no fixed IP range                                                     |
 | TTL                 | **End date ≤ 90 days**. Rotate before it expires (create a new token, update the secrets, delete the old one) |
 
-When the custom domain is attached, add **Zone → Workers Routes → Edit** restricted to the
-`andresmolina.dev` zone (to be confirmed with the minimal token when the domain is connected).
-Your **Account ID** is shown on the Workers & Pages overview page; it is an identifier, not a
+The zone permission lets `wrangler deploy` attach the custom domains declared in
+[`wrangler.jsonc`](wrangler.jsonc) (`andresmolina.dev` and `www.andresmolina.dev`); Cloudflare then
+creates their DNS records and certificates. Your **Account ID** is shown on the Workers & Pages overview page; it is an identifier, not a
 credential, but it is still stored as a secret to keep it out of logs.
 
 ### GitHub repository setup
@@ -200,12 +202,15 @@ credential, but it is still stored as a secret to keep it out of logs.
 GitHub CLI and is safe to re-run:
 
 ```bash
-scripts/github-setup.sh Milodon247/andresmolina.dev https://andresmolina-dev.<your-subdomain>.workers.dev
+scripts/github-setup.sh Milodon247/andresmolina.dev
 ```
 
 It enables secret scanning, push protection, Dependabot alerts and security updates; allows only
-squash merges; creates the `production` environment (deployable from `main` only, with the
-`PRODUCTION_URL` variable) and the `preview` environment; and creates this **ruleset for `main`**:
+squash merges; creates the `production` environment (deployable from `main` only) and the `preview`
+environment; and creates this **ruleset for `main`**. The production URL is not a GitHub setting:
+it is `PRODUCTION_URL` in [`deploy.yml`](.github/workflows/deploy.yml) and
+[`rollback.yml`](.github/workflows/rollback.yml), changed in the same commit as the domain in
+`wrangler.jsonc` (a unit test keeps the three and `site` in `astro.config.ts` in sync).
 
 - Pull request required; review threads must be resolved; squash merge only.
 - Required status checks (branch must be up to date): `Checks / test:all`, `Checks / npm audit`,
@@ -229,6 +234,19 @@ that was live before. To restore it: **Actions → Rollback → Run workflow**, 
 `version_id` (or leave it empty for the version before the current one) and give a reason. The
 workflow runs `wrangler rollback` and the production smoke tests again. Afterwards, fix the cause in
 a pull request: the next merge to `main` deploys normally.
+
+**Rollback restores code, not infrastructure.** Custom domains, the `workers.dev` toggle and zone
+settings belong to the Worker or the zone, not to a version, so `wrangler rollback` (and even a
+revert PR) leaves them as they are. If the failure is in the domain itself (DNS or certificate not
+ready, a zone feature rewriting pages, an extra header added by a zone rule):
+
+1. Check the run's logs: `Wait for production to answer` failing means DNS/certificate; a smoke
+   test mentioning `/cdn-cgi/` or an unexpected header means a zone setting.
+2. Fix it in the Cloudflare dashboard (zone `andresmolina.dev`: Scrape Shield, Rules, SSL/TLS), or,
+   to take the domain out of service, detach it under **Workers & Pages → andresmolina-dev →
+   Settings → Domains & Routes** and re-enable `workers.dev` there.
+3. Re-run the failed jobs of the `Deploy` run, or open a PR that matches `wrangler.jsonc` and
+   `PRODUCTION_URL` to the state you chose.
 
 Limits (Cloudflare): only the 100 most recent versions can be restored, and versions older than
 30 days may be deleted by retention. `npx wrangler deployments list` and `npx wrangler versions list`
@@ -263,5 +281,8 @@ Instructions for coding agents live in a single file, [`AGENTS.md`](AGENTS.md).
 
 1. **Phase 1, local site**: done.
 2. **Phase 2, tests**: done.
-3. **Phase 3, CI/CD**: implemented; first pipeline runs pending.
-4. Next: attach the custom domain `andresmolina.dev`, then submit it to the HSTS preload list.
+3. **Phase 3, CI/CD**: done.
+4. **Phase 4, custom domain**: `andresmolina.dev` (and `www`) served by the Worker; the main
+   `workers.dev` route is off (version and PR preview URLs stay on `workers.dev` with `noindex`,
+   because `wrangler preview` needs them); email routing with SPF, DKIM and DMARC `p=reject`. HSTS
+   preload needs no submission: the whole `.dev` TLD is preloaded in browsers.
