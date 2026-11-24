@@ -5,65 +5,232 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Milodon247/andresmolina.dev/badge)](https://scorecard.dev/viewer/?uri=github.com/Milodon247/andresmolina.dev)
 [![Security headers](https://img.shields.io/security-headers?url=https%3A%2F%2Fandresmolina.dev)](https://securityheaders.com/?q=andresmolina.dev&followRedirects=on)
 
-CV and portfolio of **Andrés Molina Bustamante**, DevSecOps architect (CISSP).
+Source of <https://andresmolina.dev>, the CV and portfolio of **Andrés Molina Bustamante**, DevSecOps
+architect (CISSP).
 
-The site doubles as a technical showcase: it is fully static, bilingual (English / Spanish), ships
-**zero client-side JavaScript**, loads nothing from third-party origins and is served with a strict
-Content Security Policy and hardened security headers.
+It is also meant as a **reusable starting point**: a bilingual, fully static personal site with
+security, quality and delivery practices you would expect from a production service. Fork it,
+replace the content, point it at your domain, and you get the same pipeline and guarantees.
+[Use it for your own site](#use-it-for-your-own-site) explains how.
 
-> Status: **Phase 4 (custom domain)**, live at <https://andresmolina.dev>. Every change goes
-> through a pull request, the full test suite, a Cloudflare preview with smoke tests, and is
-> deployed to production by GitHub Actions only.
+## Highlights
 
-## Stack
+- **A+** on [securityheaders.com](https://securityheaders.com/?q=andresmolina.dev&followRedirects=on)
+  and [Mozilla Observatory](https://developer.mozilla.org/en-US/observatory/analyze?host=andresmolina.dev)
+  (12/12 tests).
+- **Strict CSP** (`default-src 'none'`) with no `unsafe-inline`, no `unsafe-eval` and no hashes,
+  because the build emits **zero client-side JavaScript** and nothing inline.
+- **No third-party origins**: fonts, icons and images are self-hosted. No analytics, no cookies.
+- **WCAG 2.2 AA** checked with axe on every page, in light and dark mode, and **Lighthouse**
+  performance ≥ 95 with 100 in accessibility, best practices and SEO, enforced in CI.
+- **Bilingual** (English default, Spanish under `/es/` with translated URLs), with content
+  validated by schemas: the build fails if a translation is missing.
+- **Supply chain hardened**: actions pinned by SHA, least-privilege tokens, exact dependency
+  versions, install scripts blocked, CodeQL, OpenSSF Scorecard, Dependabot with a cooldown, secret
+  scanning in hooks and CI.
+- **Every change is tested and previewed**: a pull request runs the full suite, deploys a
+  Cloudflare preview and smoke-tests its real HTTP headers. Production deploys only from GitHub
+  Actions, followed by smoke tests, with a one-click rollback.
 
-| Piece     | Choice                                                                      |
-| --------- | --------------------------------------------------------------------------- |
-| Framework | [Astro](https://astro.build) 7, `output: 'static'`                          |
-| Language  | TypeScript, `strictest` config                                              |
-| Styles    | Tailwind CSS 4 (`@tailwindcss/vite`), light/dark via `prefers-color-scheme` |
-| Content   | Astro Content Collections validated with Zod                                |
-| Font      | Inter (variable), self-hosted via Fontsource                                |
-| SEO       | `@astrojs/sitemap` with hreflang, `robots.txt`, Open Graph, JSON-LD         |
-| Runtime   | Node `>=22.23.4` (`.nvmrc`: 26), npm with committed lockfile                |
+## Architecture
 
-## Getting started
+```mermaid
+flowchart LR
+    dev["Developer<br/>git hooks: gitleaks, ESLint,<br/>Prettier, typecheck, commit-msg"]
 
-Prerequisites: Node (see `.nvmrc`) and [gitleaks](https://github.com/gitleaks/gitleaks) on your
-`PATH` for the pre-commit hook (`winget install Gitleaks.Gitleaks` on Windows,
-`brew install gitleaks` on macOS).
+    subgraph gh["GitHub"]
+        repo["Repository<br/>ruleset on main: PR, 8 required checks"]
+        actions["GitHub Actions<br/>checks, preview, deploy, rollback"]
+        sec["CodeQL · Scorecard ·<br/>Dependabot · secret scanning"]
+    end
+
+    subgraph cf["Cloudflare"]
+        preview["Preview per PR<br/>*.workers.dev, noindex"]
+        worker["Workers Static Assets<br/>dist/ + _headers"]
+        rules["Redirect rule<br/>www → apex (301)"]
+        mail["Email Routing<br/>SPF · DKIM · DMARC p=reject"]
+    end
+
+    visitor(["Visitor"])
+
+    dev -- "pull request" --> repo
+    repo --> actions
+    repo --> sec
+    actions -- "wrangler preview" --> preview
+    actions -- "wrangler deploy" --> worker
+    visitor -- "https://andresmolina.dev" --> worker
+    visitor -- "https://www…" --> rules --> worker
+```
+
+The site is plain files: Astro renders every page at build time into `dist/`, and an assets-only
+Worker serves them with the headers declared in [`public/_headers`](public/_headers). There is no
+server code, database or client script to attack.
+
+## Delivery pipeline
+
+```mermaid
+flowchart TD
+    pr["Pull request to main"] --> checks
+    subgraph checks["Checks (reusable workflow)"]
+        direction LR
+        t["test:all<br/>types, lint, unit, build,<br/>HTML, links, E2E, a11y, Lighthouse"]
+        a["npm audit<br/>+ signatures"]
+        g["gitleaks<br/>full history"]
+        z["zizmor<br/>workflow audit"]
+    end
+    pr --> dr["Dependency review"]
+    pr --> cq["CodeQL"]
+    checks --> pv["Deploy preview<br/>wrangler preview pr-N"] --> ps["Smoke tests on the preview<br/>real headers, CSP, redirects, 404"]
+    ps --> merge["Squash merge<br/>(all required checks green)"]
+    dr --> merge
+    cq --> merge
+    merge --> checks2["Checks again on main"] --> deploy["wrangler deploy --strict<br/>environment: production"]
+    deploy --> wait["Wait for HTTPS 200"] --> smoke["Smoke tests on production"]
+    smoke -- "fail" --> rb["Rollback workflow<br/>wrangler rollback + smoke tests"]
+```
+
+The build that is tested is the build that is deployed: `checks` uploads `dist/` as an artifact
+and the preview and deploy jobs publish exactly that artifact.
+
+## Technologies and why
+
+| Area           | Choice                                                    | Why                                                                                        |
+| -------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Framework      | [Astro](https://astro.build) 7, `output: 'static'`        | HTML at build time, zero JS by default, content collections                                |
+| Language       | TypeScript, `strictest`                                   | Type errors fail the build, in `.ts` and `.astro` files                                    |
+| Styles         | Tailwind CSS 4 (`@tailwindcss/vite`)                      | Utility classes compiled to one external stylesheet; light/dark via `prefers-color-scheme` |
+| Content        | Content Collections + Zod                                 | CV data as JSON/Markdown with schemas; both languages required                             |
+| Font           | Inter (variable, Fontsource), self-hosted                 | No Google Fonts; preload plus a metric-matched fallback to avoid layout shift              |
+| SEO            | `@astrojs/sitemap`, hreflang, Open Graph, JSON-LD         | Canonical and alternate links on every page; structured data as a non-executable block     |
+| Hosting        | Cloudflare Workers Static Assets                          | Global edge, custom headers, per-PR previews, versioned deploys with rollback              |
+| CI/CD          | GitHub Actions + Wrangler from the lockfile               | No third-party deploy action; tokens scoped to one account and one zone                    |
+| Unit tests     | Vitest                                                    | i18n, schemas, `_headers`/CSP parsing, `security.txt` expiry, repository invariants        |
+| Build tests    | Vitest on `dist/`, html-validate, linkinator              | Nothing inline, no external resources, valid HTML, no broken links                         |
+| Browser tests  | Playwright (Chromium, Pixel 7, iPhone 15), axe-core       | Navigation, language switch, no console errors, no external requests, WCAG 2.2 AA          |
+| Performance    | Lighthouse CI                                             | Budgets on every page, three runs each                                                     |
+| Code quality   | ESLint (type-aware, Astro, jsx-a11y strict), Prettier     | Run in git hooks and CI                                                                    |
+| Git hooks      | lefthook                                                  | gitleaks, lint, format, typecheck before commit; Conventional Commits check                |
+| Supply chain   | Dependabot, CodeQL, OpenSSF Scorecard, Dependency Review  | Updates with a 7-day cooldown; SAST on code and workflows; posture score                   |
+| Workflow audit | [zizmor](https://github.com/zizmorcore/zizmor) (pedantic) | Catches injection, excessive permissions and unpinned actions in workflows                 |
+
+## Use it for your own site
+
+You need: a GitHub account, a Cloudflare account with your domain on it, Node (see `.nvmrc`), the
+[GitHub CLI](https://cli.github.com) and [gitleaks](https://github.com/gitleaks/gitleaks).
+
+**The content is personal.** The CV in `src/content/`, the name and texts in `src/i18n/ui.ts`, and
+the images in `design/` and `public/` describe me: replace all of them before you publish.
+
+### 1. Make it yours
+
+Fork or copy the repository, then change these identifiers. A unit test keeps the production URL
+consistent across the files that need it, so `npm run test:quick` tells you if you miss one.
+
+| What               | Where                                                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| Site URL           | `src/config/site.ts`, `site` in `astro.config.ts`, `PRODUCTION_URL` in `.github/workflows/deploy.yml` and `rollback.yml` |
+| Domain             | `routes` in `wrangler.jsonc` (apex and `www`), and the Worker `name`                                                     |
+| Name and repo      | `src/config/site.ts`, `public/site.webmanifest`, `package.json`                                                          |
+| Page descriptions  | `meta` entries in `src/i18n/ui.ts`                                                                                       |
+| Security contact   | `public/.well-known/security.txt` (and its test in `tests/security/security-txt.test.ts`), `SECURITY.md`                 |
+| Images             | `design/og-default.svg`, `public/favicon.svg`, then `npm run images`                                                     |
+| CV content         | `src/content/` (see [Updating the content](#updating-the-content))                                                       |
+| Agent instructions | `AGENTS.md` describes this project; keep the rules, update the project description                                       |
+
+### 2. Run it locally
 
 ```bash
 nvm use                                  # or: fnm use
 npm ci                                   # also installs the git hooks
-npx playwright install --with-deps chromium webkit   # browsers for E2E, a11y and Lighthouse (CI uses the Playwright image)
+npx playwright install --with-deps chromium webkit   # browsers for E2E, a11y and Lighthouse
 npm run dev                              # http://localhost:4321
+npm run test:quick                       # 1–2 minutes; test:all runs everything (~9 minutes)
 ```
 
-| Command              | Description                                                  |
-| -------------------- | ------------------------------------------------------------ |
-| `npm run dev`        | Development server with hot reload                           |
-| `npm run build`      | Type-check (`astro check`) and build into `dist/`            |
-| `npm run preview`    | Serve the production build locally with the security headers |
-| `npm run test:all`   | Run every check and test (see [Testing](#testing)), ~9 min   |
-| `npm run test:quick` | Fast local loop: typecheck, lint, format, unit, build, dist  |
-| `npm run test:smoke` | Smoke tests against a deployed URL (`BASE_URL=https://…`)    |
-| `npm run format`     | Format the code with Prettier                                |
-| `npm run images`     | Regenerate icons and the OG image from their SVG sources     |
+### 3. Cloudflare API token
+
+Create it in **Cloudflare dashboard → My Profile → API Tokens → Create Token → Create Custom Token**:
+
+| Field               | Value                                                                                                         |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Permissions         | **Account → Workers Scripts → Edit** and **Zone → Workers Routes → Edit** (nothing else)                      |
+| Account Resources   | **Include → your account** only                                                                               |
+| Zone Resources      | **Include → Specific zone → your domain** only                                                                |
+| Client IP filtering | Leave empty: GitHub-hosted runners have no fixed IP range                                                     |
+| TTL                 | **End date ≤ 90 days**. Rotate before it expires (create a new token, update the secrets, delete the old one) |
+
+The zone permission lets `wrangler deploy` attach the custom domains declared in `wrangler.jsonc`;
+Cloudflare then creates their DNS records and certificates. Your **Account ID** is on the Workers &
+Pages overview page; it is not a credential, but it is stored as a secret to keep it out of logs.
+
+### 4. Configure the GitHub repository
+
+[`scripts/github-setup.sh`](scripts/github-setup.sh) applies the whole configuration with the GitHub
+CLI and is safe to re-run:
+
+```bash
+scripts/github-setup.sh <owner>/<repo>
+```
+
+It enables secret scanning, push protection, private vulnerability reporting, Dependabot alerts and
+security updates; allows only squash merges; creates the `production` environment (deployable from
+`main` only) and the `preview` environment; and creates this **ruleset for `main`**:
+
+- Pull request required; review threads must be resolved; squash merge only.
+- Required status checks (branch must be up to date): `Checks / test:all`, `Checks / npm audit`,
+  `Checks / gitleaks`, `Checks / zizmor`, `Dependency review`, `Smoke tests (preview)`,
+  `Analyze (javascript-typescript)`, `Analyze (actions)`.
+- No force pushes, no deletion, linear history.
+
+Then store the Cloudflare secrets in both environments (the CLI prompts for the values):
+
+```bash
+gh secret set CLOUDFLARE_API_TOKEN  --repo <owner>/<repo> --env production
+gh secret set CLOUDFLARE_ACCOUNT_ID --repo <owner>/<repo> --env production
+gh secret set CLOUDFLARE_API_TOKEN  --repo <owner>/<repo> --env preview
+gh secret set CLOUDFLARE_ACCOUNT_ID --repo <owner>/<repo> --env preview
+```
+
+### 5. First deploy and domain
+
+Open a pull request with your changes: it runs the checks and deploys a preview. Merging it runs
+the `Deploy` workflow, which creates the Worker, attaches your domains and waits until they answer
+over HTTPS before the smoke tests. Then, in the Cloudflare dashboard of your zone:
+
+- **Rules → Redirect Rules → "Redirect from WWW to root"**: `https://www.<domain>/*` →
+  `https://<domain>/${1}`, 301, preserve query string.
+- Optionally **Email → Email Routing** for your contact and `security@` addresses, with a DMARC
+  record (`p=reject`).
+
+HSTS preload needs no submission for `.dev` domains (the whole TLD is preloaded). For other TLDs,
+submit your domain at [hstspreload.org](https://hstspreload.org) once you are sure every subdomain
+serves HTTPS.
+
+## Commands
+
+| Command              | Description                                                       |
+| -------------------- | ----------------------------------------------------------------- |
+| `npm run dev`        | Development server with hot reload                                |
+| `npm run build`      | Type-check (`astro check`) and build into `dist/`                 |
+| `npm run preview`    | Serve the production build locally **with the security headers**  |
+| `npm run test:quick` | Typecheck, lint, format, unit, build and `dist/` checks (1–2 min) |
+| `npm run test:all`   | Every check below, stopping at the first failure (~9 min)         |
+| `npm run test:smoke` | Smoke tests against a deployed URL (`BASE_URL=https://…`)         |
+| `npm run format`     | Format the code with Prettier                                     |
+| `npm run images`     | Regenerate icons and the OG image from their SVG sources          |
 
 ## Testing
 
-`npm run test:all` runs every step below in order and stops at the first failure. It takes about
-9 minutes, mostly Lighthouse (10 pages × 3 runs). For day-to-day edits, `npm run test:quick` runs
-the first five steps plus `test:dist` in 1–2 minutes; CI always runs the full suite on every pull
-request and before every deployment.
+`npm run test:all` runs every step in order and stops at the first failure. Most of its time is
+Lighthouse (10 pages × 3 runs). CI always runs the full suite on every pull request and before every
+deployment.
 
 | Step              | Tool                          | What it guarantees                                                                                                         |
 | ----------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `typecheck`       | `astro check`, `tsc --noEmit` | Strict types in `.astro` and `.ts`                                                                                         |
 | `lint`            | ESLint                        | Type-aware TypeScript rules, Astro rules, strict jsx-a11y, no inline scripts                                               |
 | `format:check`    | Prettier                      | Consistent formatting                                                                                                      |
-| `test:unit`       | Vitest                        | Dates, i18n routes and dictionary parity, content schemas, `_headers` and CSP, `security.txt` expiry                       |
+| `test:unit`       | Vitest                        | Dates, i18n routes and dictionary parity, content schemas, `_headers` and CSP, `security.txt` expiry, workflow invariants  |
 | `build`           | Astro                         | Content validates against schemas; every entry exists in both languages                                                    |
 | `test:dist`       | Vitest                        | No inline scripts/styles, no JS files, no third-party resources, canonical + hreflang on every page                        |
 | `test:html`       | html-validate                 | Valid, well-formed HTML                                                                                                    |
@@ -72,33 +239,16 @@ request and before every deployment.
 | `test:a11y`       | axe-core                      | Zero WCAG 2.2 AA violations on every page, in light and dark mode                                                          |
 | `test:lighthouse` | Lighthouse CI                 | Performance ≥ 95, Accessibility = Best Practices = SEO = 100 on every page                                                 |
 
-E2E, a11y and Lighthouse run on three browser projects or presets: desktop Chromium, mobile
-Chromium (Pixel 7) and mobile WebKit (iPhone 15). `npm run preview` (used by Playwright) serves the
-site with the headers from `public/_headers`, so any CSP violation fails the tests locally.
+E2E, a11y and Lighthouse run on desktop Chromium, mobile Chromium (Pixel 7) and mobile WebKit
+(iPhone 15). `npm run preview` (used by Playwright) serves the site with the headers from
+`public/_headers`, so a CSP violation fails the tests locally. In CI, browser jobs run in the
+official Playwright container image, pinned by digest.
 
-**Git hooks** (lefthook, installed by `npm ci`):
+## Updating the content
 
-- `pre-commit`: gitleaks on staged changes, ESLint and Prettier on staged files, typecheck.
-- `commit-msg`: [Conventional Commits](https://www.conventionalcommits.org) format.
-
-## Languages and URLs
-
-English is the default language; Spanish lives under `/es/` with translated slugs. Every page has
-a visible language button (header and footer) linking to the same page in the other language.
-
-| Page           | English            | Spanish                |
-| -------------- | ------------------ | ---------------------- |
-| About          | `/`                | `/es/`                 |
-| Experience     | `/experience/`     | `/es/experiencia/`     |
-| Certifications | `/certifications/` | `/es/certificaciones/` |
-| Projects       | `/projects/`       | `/es/proyectos/`       |
-| Contact        | `/contact/`        | `/es/contacto/`        |
-
-## Updating the CV
-
-All CV data lives in `src/content/`. Edit the files and run `npm run build`; the build fails with
-a clear message if something does not match its schema (`src/content.config.ts`) or if an entry is
-missing in one of the languages.
+All CV data lives in `src/content/`. Edit the files and run `npm run build`; it fails with a clear
+message if something does not match its schema (`src/content/schemas.ts`) or an entry is missing in
+one of the languages.
 
 | What                                                | File(s)                                                |
 | --------------------------------------------------- | ------------------------------------------------------ |
@@ -107,18 +257,14 @@ missing in one of the languages.
 | Projects                                            | `src/content/projects/en/<slug>.md` + `es/<slug>.md`   |
 | Certifications                                      | `src/content/certifications/certifications.json`       |
 | Skills                                              | `src/content/skills/skills.json`                       |
-| Interface text (menus, headings)                    | `src/i18n/ui.ts`                                       |
-
-Conventions:
+| Interface text (menus, headings, page descriptions) | `src/i18n/ui.ts`                                       |
 
 - Dates use `YYYY-MM`. Omit `end` on the current job.
 - Translatable fields in JSON are objects: `{ "en": "…", "es": "…" }`.
-- A Markdown entry must use the **same file name** in `en/` and `es/`; its body (bullets or
-  paragraphs) is rendered on the page.
+- A Markdown entry uses the **same file name** in `en/` and `es/`; its body is rendered on the page.
 - Links must be `https://`.
-- **This repository is public.** Only add what you want on the public site: no phone number, home
-  address, date of birth or ID numbers. Prefer a dedicated email alias over a personal inbox, and
-  only add a certification's credential ID if the issuer expects it to be shared for verification.
+- **If your repository is public**, only add what you want on the public site: no phone number,
+  home address, date of birth or ID numbers. Prefer a dedicated email alias over a personal inbox.
 
 Example job (`src/content/experience/en/acme.md`):
 
@@ -135,6 +281,10 @@ technologies: [Kubernetes, Terraform]
 - What you did and the measurable outcome.
 ```
 
+English is the default language and Spanish lives under `/es/` with translated slugs (route map in
+`src/i18n/routes.ts`). Every page has a visible language button linking to the same page in the
+other language.
+
 ## Security
 
 - **CSP** (`public/_headers`): `default-src 'none'` and only `'self'` for styles, images, fonts and
@@ -142,24 +292,20 @@ technologies: [Kubernetes, Terraform]
   scripts or styles (`build.inlineStylesheets: 'never'`, no client JS).
 - **Other headers**: HSTS (2 years, `includeSubDomains`, `preload`), `X-Frame-Options: DENY` +
   `frame-ancestors 'none'`, `X-Content-Type-Options`, `Referrer-Policy`, deny-all
-  `Permissions-Policy`, COOP / COEP / CORP.
-- **No third parties**: fonts and icons are self-hosted, no analytics, no cookies.
-- **Vulnerability disclosure**: [`/.well-known/security.txt`](public/.well-known/security.txt)
-  (RFC 9116). A test fails 30 days before `Expires`, so it gets renewed in time.
+  `Permissions-Policy`, COOP / COEP / CORP, and `Cache-Control: no-transform` so zone features
+  cannot inject scripts into the pages.
+- **Vulnerability disclosure**: [`SECURITY.md`](SECURITY.md) and
+  [`/.well-known/security.txt`](public/.well-known/security.txt) (RFC 9116). A test fails 30 days
+  before `Expires`, so it gets renewed in time.
 - **Supply chain**: exact versions, committed lockfile, npm install scripts blocked by default
   (`allowScripts` in `package.json`), vulnerable transitive packages pinned with `overrides`,
-  gitleaks on every commit.
+  gitleaks on every commit and on the full history in CI.
 
 `_headers` is applied by Cloudflare in production and by `astro preview` locally (minus
 `upgrade-insecure-requests`, which would break `http://localhost` in WebKit). `astro dev` does not
 apply it.
 
-## Deployment pipeline
-
-The site runs on **Cloudflare Workers with Static Assets** (an assets-only Worker serving `dist/`,
-configured in [`wrangler.jsonc`](wrangler.jsonc)), which Cloudflare recommends over Pages for new
-projects. Nothing is deployed from a laptop or the Cloudflare dashboard: the Worker is created by
-the first `wrangler deploy` in CI.
+## Workflows
 
 | Workflow                                             | Trigger                 | What it does                                                                                                                                           |
 | ---------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -172,85 +318,34 @@ the first `wrangler deploy` in CI.
 | [`scorecard.yml`](.github/workflows/scorecard.yml)   | push, weekly            | OpenSSF Scorecard, published for the badge and uploaded to Code Scanning                                                                               |
 | [`dependabot.yml`](.github/dependabot.yml)           | weekly                  | Grouped npm and Actions updates with a 7-day cooldown (security updates are not delayed)                                                               |
 
-Pipeline hardening: every action pinned to a full commit SHA, `permissions: {}` by default and the
-minimum per job, `persist-credentials: false`, `timeout-minutes` on every job, `concurrency` so two
-production changes never overlap, no `pull_request_target`, no dependency cache in deploy paths,
-gitleaks installed from a checksum-verified release, wrangler run from the lockfile (no third-party
-deploy action). Pull requests from forks and from Dependabot run all checks but never receive
+Hardening: every action pinned to a full commit SHA, `permissions: {}` by default and the minimum
+per job, `persist-credentials: false`, `timeout-minutes` on every job, `concurrency` so two
+production changes never overlap, no `pull_request_target`, no `${{ }}` inside `run:`, no
+dependency cache in deploy paths, gitleaks installed from a checksum-verified release, wrangler run
+from the lockfile. Pull requests from forks and from Dependabot run all checks but never receive
 secrets or previews. zizmor (pedantic) reports no findings.
-
-### Cloudflare API token (least privilege)
-
-Create it in **Cloudflare dashboard → My Profile → API Tokens → Create Token → Create Custom Token**:
-
-| Field               | Value                                                                                                         |
-| ------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Permissions         | **Account → Workers Scripts → Edit** and **Zone → Workers Routes → Edit** (nothing else)                      |
-| Account Resources   | **Include → your account** only                                                                               |
-| Zone Resources      | **Include → Specific zone → `andresmolina.dev`** only                                                         |
-| Client IP filtering | Leave empty: GitHub-hosted runners have no fixed IP range                                                     |
-| TTL                 | **End date ≤ 90 days**. Rotate before it expires (create a new token, update the secrets, delete the old one) |
-
-The zone permission lets `wrangler deploy` attach the custom domains declared in
-[`wrangler.jsonc`](wrangler.jsonc) (`andresmolina.dev` and `www.andresmolina.dev`); Cloudflare then
-creates their DNS records and certificates. Your **Account ID** is shown on the Workers & Pages overview page; it is an identifier, not a
-credential, but it is still stored as a secret to keep it out of logs.
-
-### GitHub repository setup
-
-[`scripts/github-setup.sh`](scripts/github-setup.sh) applies the whole configuration with the
-GitHub CLI and is safe to re-run:
-
-```bash
-scripts/github-setup.sh Milodon247/andresmolina.dev
-```
-
-It enables secret scanning, push protection, Dependabot alerts and security updates; allows only
-squash merges; creates the `production` environment (deployable from `main` only) and the `preview`
-environment; and creates this **ruleset for `main`**. The production URL is not a GitHub setting:
-it is `PRODUCTION_URL` in [`deploy.yml`](.github/workflows/deploy.yml) and
-[`rollback.yml`](.github/workflows/rollback.yml), changed in the same commit as the domain in
-`wrangler.jsonc` (a unit test keeps the three and `site` in `astro.config.ts` in sync).
-
-- Pull request required; review threads must be resolved; squash merge only.
-- Required status checks (branch must be up to date): `Checks / test:all`, `Checks / npm audit`,
-  `Checks / gitleaks`, `Checks / zizmor`, `Dependency review`, `Smoke tests (preview)`,
-  `Analyze (javascript-typescript)`, `Analyze (actions)`.
-- No force pushes, no deletion, linear history.
-
-Then store the Cloudflare secrets in both environments (the CLI prompts for the values):
-
-```bash
-gh secret set CLOUDFLARE_API_TOKEN --repo Milodon247/andresmolina.dev --env production
-gh secret set CLOUDFLARE_ACCOUNT_ID --repo Milodon247/andresmolina.dev --env production
-gh secret set CLOUDFLARE_API_TOKEN --repo Milodon247/andresmolina.dev --env preview
-gh secret set CLOUDFLARE_ACCOUNT_ID --repo Milodon247/andresmolina.dev --env preview
-```
 
 ### Rollback
 
 If the production smoke tests fail, the `Deploy` run turns red and its summary shows the version
-that was live before. To restore it: **Actions → Rollback → Run workflow**, paste that
-`version_id` (or leave it empty for the version before the current one) and give a reason. The
-workflow runs `wrangler rollback` and the production smoke tests again. Afterwards, fix the cause in
-a pull request: the next merge to `main` deploys normally.
+that was live before. To restore it: **Actions → Rollback → Run workflow**, paste that `version_id`
+(or leave it empty for the version before the current one) and give a reason. The workflow runs
+`wrangler rollback` and the production smoke tests again. Then fix the cause in a pull request.
 
 **Rollback restores code, not infrastructure.** Custom domains, the `workers.dev` toggle and zone
 settings belong to the Worker or the zone, not to a version, so `wrangler rollback` (and even a
-revert PR) leaves them as they are. If the failure is in the domain itself (DNS or certificate not
-ready, a zone feature rewriting pages, an extra header added by a zone rule):
+revert PR) leaves them as they are. If the failure is in the domain itself:
 
-1. Check the run's logs: `Wait for production to answer` failing means DNS/certificate; a smoke
+1. Check the run's logs: `Wait for production to answer` failing means DNS or certificate; a smoke
    test mentioning `/cdn-cgi/` or an unexpected header means a zone setting.
-2. Fix it in the Cloudflare dashboard (zone `andresmolina.dev`: Scrape Shield, Rules, SSL/TLS), or,
-   to take the domain out of service, detach it under **Workers & Pages → andresmolina-dev →
-   Settings → Domains & Routes** and re-enable `workers.dev` there.
+2. Fix it in the Cloudflare dashboard (Scrape Shield, Rules, SSL/TLS), or take the domain out of
+   service under **Workers & Pages → your Worker → Settings → Domains & Routes** and re-enable
+   `workers.dev` there.
 3. Re-run the failed jobs of the `Deploy` run, or open a PR that matches `wrangler.jsonc` and
    `PRODUCTION_URL` to the state you chose.
 
-Limits (Cloudflare): only the 100 most recent versions can be restored, and versions older than
-30 days may be deleted by retention. `npx wrangler deployments list` and `npx wrangler versions list`
-show the history.
+Cloudflare keeps the 100 most recent versions restorable, and may delete versions older than 30
+days. `npx wrangler deployments list` and `npx wrangler versions list` show the history.
 
 ## Project structure
 
@@ -260,14 +355,13 @@ astro.config.ts       site URL, static output, sitemap (hreflang), Tailwind, pre
 wrangler.jsonc        Cloudflare Worker (static assets) configuration
 public/               _headers, security.txt, icons, OG image, manifest
 design/               SVG sources of generated images
-scripts/              maintenance scripts, commit-msg check, shared tooling (scripts/lib)
+scripts/              repository setup, wait-for-site, image generation, commit-msg check
 tests/                unit, security, repo, dist (Vitest), e2e (Playwright + axe), smoke (deployed URL)
-src/content/          CV data (see above) and its Zod schemas (schemas.ts)
-src/content.config.ts collections wiring
+src/content/          CV data and its Zod schemas (schemas.ts)
 src/i18n/             locales, translated route map, UI strings
 src/components/       layout, SEO head, CV building blocks, shared page bodies
 src/layouts/          BaseLayout
-src/lib/              pure utilities (dates, translation checks) and content queries
+src/lib/              pure utilities and content queries
 src/pages/            English routes at the root, Spanish in es/
 src/styles/global.css design tokens, light/dark, print styles
 ```
@@ -276,14 +370,3 @@ src/styles/global.css design tokens, light/dark, print styles
 
 Instructions for coding agents live in a single file, [`AGENTS.md`](AGENTS.md).
 `CLAUDE.md`, `.github/copilot-instructions.md` and `.cursor/rules/project.mdc` only point to it.
-
-## Roadmap
-
-1. **Phase 1, local site**: done.
-2. **Phase 2, tests**: done.
-3. **Phase 3, CI/CD**: done.
-4. **Phase 4, custom domain**: `andresmolina.dev` served by the Worker, `www` redirected to it
-   (301, Cloudflare Single Redirect rule); A+ on securityheaders.com and Mozilla Observatory; the main
-   `workers.dev` route is off (version and PR preview URLs stay on `workers.dev` with `noindex`,
-   because `wrangler preview` needs them); email routing with SPF, DKIM and DMARC `p=reject`. HSTS
-   preload needs no submission: the whole `.dev` TLD is preloaded in browsers.
