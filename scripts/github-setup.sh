@@ -21,7 +21,7 @@ gh api -X PUT "repos/${repo}/private-vulnerability-reporting" --silent
 echo "== Merge settings: squash only, linear history, delete merged branches"
 gh api -X PATCH "repos/${repo}" --silent \
   -F allow_merge_commit=false -F allow_squash_merge=true -F allow_rebase_merge=false \
-  -F delete_branch_on_merge=true -F allow_auto_merge=false
+  -F delete_branch_on_merge=true -F allow_auto_merge=true
 
 echo "== Environments"
 # production: only the main branch may deploy.
