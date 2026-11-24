@@ -1,6 +1,7 @@
 # Security contact for andresmolina.dev (RFC 9116).
-# Placeholder contact: replace with a real address before going live.
 Contact: mailto:security@andresmolina.dev
+Contact: https://github.com/Milodon247/andresmolina.dev/security/advisories/new
 Expires: 2027-10-31T23:59:59.000Z
+Policy: https://github.com/Milodon247/andresmolina.dev/security/policy
 Preferred-Languages: en, es
 Canonical: https://andresmolina.dev/.well-known/security.txt

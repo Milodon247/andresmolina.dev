@@ -15,6 +15,8 @@ gh api -X PATCH "repos/${repo}" --silent \
   -f 'security_and_analysis[secret_scanning_push_protection][status]=enabled'
 gh api -X PUT "repos/${repo}/vulnerability-alerts" --silent
 gh api -X PUT "repos/${repo}/automated-security-fixes" --silent
+# Lets researchers report vulnerabilities privately (referenced by SECURITY.md and security.txt).
+gh api -X PUT "repos/${repo}/private-vulnerability-reporting" --silent
 
 echo "== Merge settings: squash only, linear history, delete merged branches"
 gh api -X PATCH "repos/${repo}" --silent \
