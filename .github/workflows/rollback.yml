@@ -16,6 +16,10 @@ on:
 
 permissions: {}
 
+# Keep in sync with deploy.yml and the custom domain in wrangler.jsonc.
+env:
+  PRODUCTION_URL: https://andresmolina.dev
+
 concurrency:
   group: rollback
   cancel-in-progress: false
@@ -29,13 +33,10 @@ jobs:
       contents: read
     environment:
       name: production
-      url: ${{ vars.PRODUCTION_URL }}
+      url: ${{ env.PRODUCTION_URL }}
     concurrency:
       group: production
       cancel-in-progress: false
-    outputs:
-      # Environment variables only reach jobs that declare the environment, so pass the URL on.
-      url: ${{ vars.PRODUCTION_URL }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -68,7 +69,7 @@ jobs:
     name: Smoke tests (production)
     needs: rollback
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     permissions:
       contents: read
     steps:
@@ -86,7 +87,10 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 
+      - name: Wait for production to answer
+        run: scripts/wait-for-site.sh "$PRODUCTION_URL" 300
+
       - name: Run smoke tests against production
         env:
-          BASE_URL: ${{ needs.rollback.outputs.url }}
+          BASE_URL: ${{ env.PRODUCTION_URL }}
         run: npm run test:smoke

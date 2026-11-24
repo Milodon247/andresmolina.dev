@@ -26,6 +26,15 @@ for (const { page: key, locale, path } of sitePages) {
     await expect(page).toHaveTitle(new RegExp(ui[locale].meta[key].title));
     await expect(page.locator('html')).toHaveAttribute('lang', localeMeta[locale].htmlLang);
   });
+
+  test(`${path} is served exactly as built (nothing injected by the CDN)`, async ({ request }) => {
+    const html = await (await request.get(path)).text();
+    // Zone features such as email obfuscation or Rocket Loader rewrite HTML under /cdn-cgi/.
+    expect(html).not.toContain('/cdn-cgi/');
+    for (const tag of html.match(/<script\b[^>]*>/gi) ?? []) {
+      expect(tag).toBe('<script type="application/ld+json">');
+    }
+  });
 }
 
 test('fingerprinted assets are cached as immutable', async ({ page, request }) => {

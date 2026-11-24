@@ -83,7 +83,11 @@ describe('security headers', () => {
 
   it('caches fingerprinted assets as immutable', () => {
     expect(header('/_astro/BaseLayout.abc123.css', 'Cache-Control')).toMatch(/immutable/);
-    expect(header('/', 'Cache-Control')).toBeUndefined();
+    expect(header('/', 'Cache-Control')).not.toMatch(/max-age|immutable/);
+  });
+
+  it.each(samplePaths)('%s forbids proxy transformations (no injected scripts)', (path) => {
+    expect(header(path, 'Cache-Control')).toMatch(/(^|,\s*)no-transform(\s*,|$)/);
   });
 });
 

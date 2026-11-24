@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # One-time (idempotent) GitHub repository hardening with the GitHub CLI.
-# Usage: scripts/github-setup.sh <owner>/<repo> <production-url>
-#   e.g. scripts/github-setup.sh octocat/andresmolina.dev https://andresmolina-dev.octocat.workers.dev
+# Usage: scripts/github-setup.sh <owner>/<repo>
+#   e.g. scripts/github-setup.sh octocat/andresmolina.dev
 # Requires `gh auth login` with admin rights on the repository. It never handles secret values:
 # set CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID yourself with `gh secret set` (see README).
+# The production URL lives in .github/workflows/deploy.yml, next to the domain in wrangler.jsonc.
 set -euo pipefail
 
-repo="${1:?usage: $0 <owner>/<repo> <production-url>}"
-production_url="${2:?usage: $0 <owner>/<repo> <production-url>}"
+repo="${1:?usage: $0 <owner>/<repo>}"
 
 echo "== Security features: secret scanning, push protection, Dependabot alerts and security updates"
 gh api -X PATCH "repos/${repo}" --silent \
@@ -32,7 +32,6 @@ gh api "repos/${repo}/environments/production/deployment-branch-policies" \
   --jq '.branch_policies[].name' | grep -qx main ||
   gh api -X POST "repos/${repo}/environments/production/deployment-branch-policies" --silent \
     -f name=main -f type=branch
-gh variable set PRODUCTION_URL --repo "${repo}" --env production --body "${production_url}"
 # preview: used by pull requests from branches of this repository.
 gh api -X PUT "repos/${repo}/environments/preview" --silent --input - <<'JSON'
 { "deployment_branch_policy": null }
