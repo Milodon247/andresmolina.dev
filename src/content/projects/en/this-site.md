@@ -1,5 +1,5 @@
 ---
-title: andresmolina.dev
+title: Personal website build
 summary: This site. A static, bilingual CV with zero client-side JavaScript, a strict CSP and a fully automated, tested pipeline.
 date: 2026-11
 featured: true
