@@ -2,6 +2,7 @@
   "name": "andresmolina-dev",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "description": "Personal CV and portfolio of Andrés Molina Bustamante",
   "engines": {

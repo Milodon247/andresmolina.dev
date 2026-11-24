@@ -118,8 +118,9 @@ and the preview and deploy jobs publish exactly that artifact.
 You need: a GitHub account, a Cloudflare account with your domain on it, Node (see `.nvmrc`), the
 [GitHub CLI](https://cli.github.com) and [gitleaks](https://github.com/gitleaks/gitleaks).
 
-**The content is personal.** The CV in `src/content/`, the name and texts in `src/i18n/ui.ts`, and
-the images in `design/` and `public/` describe me: replace all of them before you publish.
+**The code is MIT, the content is not.** The CV in `src/content/`, the name and texts in
+`src/i18n/ui.ts`, and the images in `design/` and `public/` describe me and are all rights reserved
+([`CONTENT-LICENSE.md`](CONTENT-LICENSE.md)): replace all of them before you publish.
 
 ### 1. Make it yours
 
@@ -370,3 +371,9 @@ src/styles/global.css design tokens, light/dark, print styles
 
 Instructions for coding agents live in a single file, [`AGENTS.md`](AGENTS.md).
 `CLAUDE.md`, `.github/copilot-instructions.md` and `.cursor/rules/project.mdc` only point to it.
+
+## License
+
+The code is released under the [MIT License](LICENSE): use it, fork it, adapt it. The personal
+content (CV data, my name, descriptions and images) is © Andrés Molina Bustamante, all rights
+reserved; see [`CONTENT-LICENSE.md`](CONTENT-LICENSE.md) for the exact files.

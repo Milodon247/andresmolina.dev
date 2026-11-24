@@ -16,6 +16,8 @@ automation practices, so every change must keep those standards.
 - Deployment: Cloudflare Workers Static Assets on `andresmolina.dev` and `www.andresmolina.dev`
   (custom domains in `wrangler.jsonc`), only from GitHub Actions. Production URL: `PRODUCTION_URL`
   in `deploy.yml` / `rollback.yml`.
+- License: code under MIT (`LICENSE`); personal content (CV data, name, descriptions, images) is
+  all rights reserved (`CONTENT-LICENSE.md`). Keep that list current when adding personal files.
 
 ## Commands
 
