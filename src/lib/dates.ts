@@ -24,6 +24,11 @@ export function currentYearMonth(now: Date = new Date()): string {
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
 }
 
+/** True when a credential's `YYYY-MM` expiry month is already over in `now`'s month. */
+export function isExpired(expires: string, now: Date = new Date()): boolean {
+  return expires < currentYearMonth(now);
+}
+
 /** Inclusive number of months between two `YYYY-MM` dates: `2020-01`..`2020-12` is 12. */
 export function monthsBetween(start: string, end: string): number {
   const a = parseYearMonth(start);

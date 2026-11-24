@@ -1,5 +1,5 @@
 ---
-title: andresmolina.dev
+title: Creación de página web personal
 summary: Este sitio. Un CV estático y bilingüe, sin JavaScript en el cliente, con una CSP estricta y un pipeline totalmente automatizado y testeado.
 date: 2026-11
 featured: true

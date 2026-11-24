@@ -46,6 +46,53 @@
   }
 }
 
+/*
+ * Manual switch (ThemeToggle.astro, no JavaScript): when its checkbox is checked, the page uses the
+ * scheme opposite to the system one. The token lists repeat the two blocks above exactly
+ * (enforced by tests/unit/theme-tokens.test.ts).
+ */
+@media (prefers-color-scheme: light) {
+  :root:has(#theme-toggle:checked) {
+    color-scheme: dark;
+    --color-bg: #0b1120;
+    --color-surface: #111a2e;
+    --color-fg: #e2e8f0;
+    --color-muted: #94a3b8;
+    --color-border: #334155;
+    --color-accent: #5eead4;
+    --color-accent-strong: #99f6e4;
+    --color-on-accent: #042f2e;
+  }
+  .theme-toggle-sun,
+  :root:has(#theme-toggle:checked) .theme-toggle-moon {
+    display: none;
+  }
+  :root:has(#theme-toggle:checked) .theme-toggle-sun {
+    display: block;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:has(#theme-toggle:checked) {
+    color-scheme: light;
+    --color-bg: #ffffff;
+    --color-surface: #f8fafc;
+    --color-fg: #0f172a;
+    --color-muted: #475569;
+    --color-border: #cbd5e1;
+    --color-accent: #0f766e;
+    --color-accent-strong: #115e59;
+    --color-on-accent: #ffffff;
+  }
+  .theme-toggle-moon,
+  :root:has(#theme-toggle:checked) .theme-toggle-sun {
+    display: none;
+  }
+  :root:has(#theme-toggle:checked) .theme-toggle-moon {
+    display: block;
+  }
+}
+
 @layer base {
   html {
     color-scheme: light dark;
@@ -93,6 +140,77 @@
   .cv-prose code {
     @apply rounded bg-surface px-1 py-0.5 text-[0.9em];
   }
+
+  /*
+   * Logo carousel (ToolCarousel.astro). Two identical lists side by side; moving the track by half
+   * its width loops seamlessly. Only `transform` animates, so it runs on the compositor.
+   */
+  .tool-carousel-viewport {
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  }
+  .tool-carousel-track {
+    display: flex;
+    width: max-content;
+  }
+  .tool-carousel-list {
+    display: flex;
+    gap: 0.75rem;
+    padding-inline-end: 0.75rem;
+  }
+  .tool-carousel-toggle:checked + .tool-carousel-control .tool-carousel-pause-icon,
+  .tool-carousel-toggle:not(:checked) + .tool-carousel-control .tool-carousel-play-icon {
+    display: none;
+  }
+}
+
+@keyframes tool-carousel {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Skill cards rise into place as they scroll into view (transform only: contrast never changes). */
+@keyframes skill-card-in {
+  from {
+    transform: translateY(1.5rem) scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tool-carousel-track {
+    animation: tool-carousel 50s linear infinite;
+  }
+  .tool-carousel-viewport:hover .tool-carousel-track,
+  .tool-carousel-toggle:checked ~ .tool-carousel-viewport .tool-carousel-track {
+    animation-play-state: paused;
+  }
+  @supports (animation-timeline: view()) {
+    .skill-card {
+      animation: skill-card-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+  }
+}
+
+/* Without motion the carousel is a static, wrapped list of logos and needs no pause control. */
+@media (prefers-reduced-motion: reduce) {
+  .tool-carousel-toggle,
+  .tool-carousel-control,
+  .tool-carousel-list[aria-hidden='true'] {
+    display: none;
+  }
+  .tool-carousel-viewport {
+    mask-image: none;
+  }
+  .tool-carousel-track {
+    width: auto;
+  }
+  .tool-carousel-list {
+    flex-wrap: wrap;
+    padding-inline-end: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -106,7 +224,8 @@
 
 /* Printing the site produces a clean one-column CV. */
 @media print {
-  :root {
+  :root,
+  :root:has(#theme-toggle:checked) {
     --color-bg: #ffffff;
     --color-surface: #ffffff;
     --color-fg: #000000;

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   compareYearMonthDesc,
   currentYearMonth,
+  isExpired,
   formatDuration,
   formatYearMonth,
   isYearMonth,
@@ -67,5 +68,15 @@ describe('compareYearMonthDesc', () => {
       '2022-12',
       '2020-01',
     ]);
+  });
+});
+
+describe('isExpired', () => {
+  const now = new Date('2026-11-24T12:00:00Z');
+
+  it('treats past months as expired and the current or later months as valid', () => {
+    expect(isExpired('2026-06', now)).toBe(true);
+    expect(isExpired('2026-11', now)).toBe(false);
+    expect(isExpired('2029-04', now)).toBe(false);
   });
 });

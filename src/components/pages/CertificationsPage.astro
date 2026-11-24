@@ -6,7 +6,7 @@ import type { Locale } from '@/i18n/config';
 import { useTranslations } from '@/i18n/ui';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCertifications } from '@/lib/content';
-import { formatYearMonth } from '@/lib/dates';
+import { formatYearMonth, isExpired } from '@/lib/dates';
 
 interface Props {
   locale: Locale;
@@ -58,7 +58,9 @@ const certifications = await getCertifications();
                 )}
                 {expires && (
                   <>
-                    <dt class="text-muted">{t.certifications.expires}</dt>
+                    <dt class="text-muted">
+                      {isExpired(expires) ? t.certifications.expired : t.certifications.expires}
+                    </dt>
                     <dd>
                       <time datetime={expires}>{formatYearMonth(expires, locale)}</time>
                     </dd>

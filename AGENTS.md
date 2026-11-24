@@ -69,6 +69,7 @@ src/config/site.ts      site-wide settings (URL, author, social links)
 src/layouts/            BaseLayout (html shell, SEO head, header, footer)
 src/components/         seo/, layout/, cv/ components
 src/lib/                pure, framework-free utilities (unit-testable)
+src/icons/brands/       brand logos copied from Simple Icons (CC0), see its README
 src/pages/              English pages at the root, Spanish pages in src/pages/es/
 src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 ```

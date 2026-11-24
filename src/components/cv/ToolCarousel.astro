@@ -1,0 +1,73 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from '@/components/ui/Icon.astro';
+import type { Locale } from '@/i18n/config';
+import { useTranslations } from '@/i18n/ui';
+import { brandIcon } from '@/lib/brand-icons';
+
+/**
+ * Logo carousel of the tools in skills.json, CSS only. The list is rendered twice so the loop is
+ * seamless; the copy is hidden from assistive tech. A native checkbox pauses it (WCAG 2.2.2), and
+ * it does not move at all with `prefers-reduced-motion` (styles in global.css).
+ */
+interface Props {
+  skills: CollectionEntry<'skills'>[];
+  locale: Locale;
+}
+
+const { skills, locale } = Astro.props;
+const t = useTranslations(locale);
+const tools = skills.flatMap((group) =>
+  group.data.tools.map((tool) => ({
+    name: tool.name,
+    brand: tool.brand ? brandIcon(tool.brand) : undefined,
+    fallback: group.data.icon,
+  })),
+);
+const id = 'tool-carousel-pause';
+---
+
+{tools.length > 0 && (
+  <div class="tool-carousel no-print mt-8">
+    <input id={id} type="checkbox" class="tool-carousel-toggle peer sr-only" />
+    <label
+      for={id}
+      class="tool-carousel-control inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-border px-4 text-sm text-muted hover:border-accent hover:text-fg peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent"
+    >
+      <Icon name="pause" class="tool-carousel-pause-icon size-4" />
+      <Icon name="play" class="tool-carousel-play-icon size-4" />
+      {t.home.pauseAnimation}
+    </label>
+    <div class="tool-carousel-viewport mt-4">
+      <div class="tool-carousel-track">
+        {[false, true].map((copy) => (
+          <ul
+            class="tool-carousel-list"
+            aria-label={copy ? undefined : t.home.toolsLabel}
+            aria-hidden={copy ? 'true' : undefined}
+          >
+            {tools.map((tool) => (
+              <li class="flex items-center gap-2.5 rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium whitespace-nowrap">
+                {tool.brand ? (
+                  <svg
+                    class="size-5 text-accent"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d={tool.brand.path} />
+                  </svg>
+                ) : (
+                  <Icon name={tool.fallback} class="size-5 text-accent" />
+                )}
+                {tool.name}
+              </li>
+            ))}
+          </ul>
+        ))}
+      </div>
+    </div>
+  </div>
+)}

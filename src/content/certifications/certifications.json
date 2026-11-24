@@ -5,7 +5,8 @@
     "name": "Certified Information Systems Security Professional",
     "acronym": "CISSP",
     "issuer": "ISC2",
-    "verifyUrl": "https://www.isc2.org/MemberVerification"
+    "expires": "2029-04",
+    "verifyUrl": "https://www.credly.com/badges/16a1f4e8-cf09-4bb2-896b-ee189d4406ef"
   },
   {
     "id": "azure-security-engineer",
@@ -24,33 +25,41 @@
     "order": 4,
     "name": "Palo Alto Networks Certified Network Security Administrator",
     "acronym": "PCNSA",
-    "issuer": "Palo Alto Networks"
+    "issuer": "Palo Alto Networks",
+    "expires": "2024-04",
+    "verifyUrl": "https://www.credly.com/badges/20ee6b05-df33-4af2-902a-85b59b192315"
   },
   {
     "id": "ccse",
     "order": 5,
     "name": "Check Point Certified Security Expert",
     "acronym": "CCSE",
-    "issuer": "Check Point"
+    "issuer": "Check Point",
+    "expires": "2026-06",
+    "verifyUrl": "https://www.credly.com/badges/2bea4cd2-e197-49d6-a682-a07c87cae08c"
   },
   {
     "id": "cccs",
     "order": 6,
     "name": "Check Point Certified Cloud Specialist",
     "acronym": "CCCS",
-    "issuer": "Check Point"
+    "issuer": "Check Point",
+    "expires": "2026-05",
+    "verifyUrl": "https://www.credly.com/badges/8a85bfbd-23e8-4fad-a71e-23702c825aa0"
   },
   {
     "id": "check-point-cloud-network-security-azure",
     "order": 7,
     "name": "Check Point Certified Cloud Network Security Expert – Azure",
-    "issuer": "Check Point"
+    "issuer": "Check Point",
+    "expires": "2026-06",
+    "verifyUrl": "https://www.credly.com/badges/e96d25a8-cf97-4f38-a41c-a7726e8f9692"
   },
   {
     "id": "python-essentials-2",
     "order": 8,
     "name": "Python Essentials 2",
-    "acronym": "PCAP",
-    "issuer": "Python Institute"
+    "issuer": "Cisco Networking Academy",
+    "verifyUrl": "https://www.credly.com/badges/1b9e8aa4-8e54-4c9c-a9b0-6e757b7362fe"
   }
 ]

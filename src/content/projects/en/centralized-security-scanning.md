@@ -1,6 +1,6 @@
 ---
-title: Centralized security scanning for 800+ GitHub repositories
-summary: Centralized SCA, SAST, DAST and IaC scanning across more than 800 GitHub repositories, with every finding consolidated in DefectDojo as the ASPM platform.
+title: SDLC security
+summary: SAST, SCA, DAST, IaC and secret scanning built into the software development lifecycle of more than 800 GitHub repositories, with every finding consolidated in DefectDojo as the ASPM platform.
 featured: true
 technologies: [DefectDojo, OpenGrep, Trivy, Grype, Syft, OWASP ZAP, GitHub Advanced Security]
 ---

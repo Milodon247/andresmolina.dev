@@ -6,11 +6,17 @@ interface UiStrings {
   mainNavLabel: string;
   /** Accessible name of the language switcher, written in the language it links to. */
   switchToThisLanguage: string;
+  /** Accessible name of the CSS-only light/dark switch in the header. */
+  themeToggle: string;
   nav: Record<PageKey, string>;
   meta: Record<PageKey, { title: string; description: string }>;
   home: {
     aboutHeading: string;
     skillsHeading: string;
+    /** Accessible name of the logo carousel list. */
+    toolsLabel: string;
+    /** Label of the CSS-only control that pauses the logo carousel (WCAG 2.2.2). */
+    pauseAnimation: string;
     highlightsHeading: string;
     ctaExperience: string;
     ctaContact: string;
@@ -27,6 +33,7 @@ interface UiStrings {
     intro: string;
     issued: string;
     expires: string;
+    expired: string;
     credentialId: string;
     verify: string;
   };
@@ -36,6 +43,8 @@ interface UiStrings {
     source: string;
     website: string;
     technologies: string;
+    /** Shown instead of a date on undated (ongoing) projects. */
+    ongoing: string;
   };
   contact: {
     heading: string;
@@ -61,6 +70,7 @@ const en: UiStrings = {
   skipToContent: 'Skip to main content',
   mainNavLabel: 'Main',
   switchToThisLanguage: 'View this page in English',
+  themeToggle: 'Switch between light and dark theme',
   nav: {
     home: 'About',
     experience: 'Experience',
@@ -95,6 +105,8 @@ const en: UiStrings = {
   home: {
     aboutHeading: 'About me',
     skillsHeading: 'Skills',
+    toolsLabel: 'Tools and platforms I work with',
+    pauseAnimation: 'Pause animation',
     highlightsHeading: 'Featured projects',
     ctaExperience: 'View experience',
     ctaContact: 'Get in touch',
@@ -111,6 +123,7 @@ const en: UiStrings = {
     intro: 'Professional certifications in security, cloud and networking.',
     issued: 'Issued',
     expires: 'Expires',
+    expired: 'Expired',
     credentialId: 'Credential ID',
     verify: 'Verify credential',
   },
@@ -119,6 +132,7 @@ const en: UiStrings = {
     intro: 'A selection of work I am proud of.',
     source: 'Source code',
     website: 'Website',
+    ongoing: 'Ongoing',
     technologies: 'Technologies',
   },
   contact: {
@@ -145,6 +159,7 @@ const es: UiStrings = {
   skipToContent: 'Saltar al contenido principal',
   mainNavLabel: 'Principal',
   switchToThisLanguage: 'Ver esta página en español',
+  themeToggle: 'Cambiar entre tema claro y oscuro',
   nav: {
     home: 'Sobre mí',
     experience: 'Experiencia',
@@ -180,6 +195,8 @@ const es: UiStrings = {
   home: {
     aboutHeading: 'Sobre mí',
     skillsHeading: 'Habilidades',
+    toolsLabel: 'Herramientas y plataformas con las que trabajo',
+    pauseAnimation: 'Pausar animación',
     highlightsHeading: 'Proyectos destacados',
     ctaExperience: 'Ver experiencia',
     ctaContact: 'Contactar',
@@ -196,6 +213,7 @@ const es: UiStrings = {
     intro: 'Certificaciones profesionales en seguridad, cloud y redes.',
     issued: 'Emitida',
     expires: 'Vence',
+    expired: 'Expiró',
     credentialId: 'ID de credencial',
     verify: 'Verificar credencial',
   },
@@ -204,6 +222,7 @@ const es: UiStrings = {
     intro: 'Una selección de trabajos de los que me siento orgulloso.',
     source: 'Código fuente',
     website: 'Sitio web',
+    ongoing: 'En curso',
     technologies: 'Tecnologías',
   },
   contact: {
