@@ -36,7 +36,7 @@ Prerequisites: Node (see `.nvmrc`) and [gitleaks](https://github.com/gitleaks/gi
 ```bash
 nvm use                                  # or: fnm use
 npm ci                                   # also installs the git hooks
-npx playwright install chromium webkit   # browsers for E2E, a11y and Lighthouse
+npx playwright install --with-deps chromium webkit   # browsers for E2E, a11y and Lighthouse (CI uses the Playwright image)
 npm run dev                              # http://localhost:4321
 ```
 
