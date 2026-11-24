@@ -151,5 +151,5 @@ src/styles/global.css   Tailwind entry, design tokens (light/dark), print styles
 - Phase 2: tests and git hooks. Done.
 - Phase 3: CI/CD to Cloudflare Workers Static Assets. Done.
 - Phase 4 (current): custom domain `andresmolina.dev`. HSTS preload needs no submission (the
-  `.dev` TLD is preloaded). Pending: www → apex redirect rule, verify securityheaders.com /
-  Mozilla Observatory grades.
+  `.dev` TLD is preloaded). `www` → apex is a Cloudflare Single Redirect rule (301, path and query
+  kept), managed in the dashboard. securityheaders.com and Mozilla Observatory: A+ (2026-11-24).

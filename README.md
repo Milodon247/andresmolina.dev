@@ -282,7 +282,8 @@ Instructions for coding agents live in a single file, [`AGENTS.md`](AGENTS.md).
 1. **Phase 1, local site**: done.
 2. **Phase 2, tests**: done.
 3. **Phase 3, CI/CD**: done.
-4. **Phase 4, custom domain**: `andresmolina.dev` (and `www`) served by the Worker; the main
+4. **Phase 4, custom domain**: `andresmolina.dev` served by the Worker, `www` redirected to it
+   (301, Cloudflare Single Redirect rule); A+ on securityheaders.com and Mozilla Observatory; the main
    `workers.dev` route is off (version and PR preview URLs stay on `workers.dev` with `noindex`,
    because `wrangler preview` needs them); email routing with SPF, DKIM and DMARC `p=reject`. HSTS
    preload needs no submission: the whole `.dev` TLD is preloaded in browsers.
