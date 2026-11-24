@@ -100,7 +100,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        run: scripts/install-browsers.sh
 
       # A new custom domain needs a few minutes for its DNS record and certificate.
       - name: Wait for production to answer

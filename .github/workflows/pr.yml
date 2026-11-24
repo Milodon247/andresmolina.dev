@@ -109,7 +109,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        run: scripts/install-browsers.sh
 
       - name: Run smoke tests against the preview URL
         env:

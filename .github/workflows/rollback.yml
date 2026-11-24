@@ -85,7 +85,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+        run: scripts/install-browsers.sh
 
       - name: Wait for production to answer
         run: scripts/wait-for-site.sh "$PRODUCTION_URL" 300
