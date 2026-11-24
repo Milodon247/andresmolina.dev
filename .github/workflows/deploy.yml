@@ -9,6 +9,11 @@ on:
 
 permissions: {}
 
+# Lives in the repo (not a GitHub variable) so it changes in the same commit as the custom domain
+# in wrangler.jsonc.
+env:
+  PRODUCTION_URL: https://andresmolina.dev
+
 # Pushes to main are queued, never cancelled, so every merged commit reaches production in order.
 concurrency:
   group: deploy
@@ -30,15 +35,13 @@ jobs:
       contents: read
     environment:
       name: production
-      url: ${{ vars.PRODUCTION_URL }}
+      url: ${{ env.PRODUCTION_URL }}
     # Shared with rollback.yml: never two production changes at once, never cancel one midway.
     concurrency:
       group: production
       cancel-in-progress: false
     outputs:
       previous-version: ${{ steps.previous.outputs.version }}
-      # Environment variables only reach jobs that declare the environment, so pass the URL on.
-      url: ${{ vars.PRODUCTION_URL }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -81,7 +84,7 @@ jobs:
     name: Smoke tests (production)
     needs: deploy
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 25
     permissions:
       contents: read
     steps:
@@ -99,9 +102,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
 
+      # A new custom domain needs a few minutes for its DNS record and certificate.
+      - name: Wait for production to answer
+        run: scripts/wait-for-site.sh "$PRODUCTION_URL" 600
+
       - name: Run smoke tests against production
         env:
-          BASE_URL: ${{ needs.deploy.outputs.url }}
+          BASE_URL: ${{ env.PRODUCTION_URL }}
         run: npm run test:smoke
 
       - name: Explain how to roll back
@@ -119,7 +126,9 @@ jobs:
               echo "This was the first deployment: there is no previous version to roll back to."
             fi
             echo
-            echo "See the README section *Rollback* for details."
+            echo "Rollback restores code only. If **Wait for production to answer** failed, or a test"
+            echo "mentions \`/cdn-cgi/\` or an unexpected header, the cause is the domain or a zone"
+            echo "setting: follow the README section *Rollback* instead."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload smoke report

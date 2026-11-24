@@ -11,9 +11,17 @@
     // Unknown paths get dist/404.html with status 404.
     "not_found_handling": "404-page",
   },
-  // Served on workers.dev until the custom domain is attached.
-  "workers_dev": true,
-  // Required for per-PR Previews (wrangler preview).
+  // Production is served only on the custom domains; Cloudflare creates their DNS records and
+  // certificates on deploy. Requires the token permission Zone → Workers Routes → Edit.
+  // www is served too (its canonical URLs point to the apex) until a www → apex redirect rule exists.
+  "routes": [
+    { "pattern": "andresmolina.dev", "custom_domain": true },
+    { "pattern": "www.andresmolina.dev", "custom_domain": true },
+  ],
+  // The main workers.dev route is off: it would duplicate the site under the account subdomain.
+  "workers_dev": false,
+  // Version and per-PR Preview URLs stay on workers.dev (Cloudflare adds X-Robots-Tag: noindex);
+  // wrangler preview needs them.
   "preview_urls": true,
   "previews": {},
   // No telemetry from CI.
