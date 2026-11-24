@@ -1,6 +1,8 @@
 # Security and caching headers, applied by Cloudflare to every static asset.
 # The site ships no JavaScript and no inline styles, so the CSP needs no hashes,
 # nonces or 'unsafe-*' keywords. Do not relax it; fix the cause instead.
+# Cache-Control: no-transform stops Cloudflare zone features (email address obfuscation,
+# Rocket Loader, ...) from rewriting pages and injecting scripts that the CSP would block.
 
 /*
   Content-Security-Policy: default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; require-trusted-types-for 'script'; upgrade-insecure-requests
@@ -13,6 +15,7 @@
   Cross-Origin-Embedder-Policy: require-corp
   Cross-Origin-Resource-Policy: same-origin
   X-Permitted-Cross-Domain-Policies: none
+  Cache-Control: no-transform
 
 # Fingerprinted build assets never change.
 /_astro/*
