@@ -91,7 +91,7 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Wait for production to answer
-        run: scripts/wait-for-site.sh "$PRODUCTION_URL" 300
+        run: node scripts/wait-for-site.ts "$PRODUCTION_URL" 300
 
       - name: Run smoke tests against production
         env:

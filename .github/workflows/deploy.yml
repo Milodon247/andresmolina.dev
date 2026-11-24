@@ -107,7 +107,7 @@ jobs:
 
       # A new custom domain needs a few minutes for its DNS record and certificate.
       - name: Wait for production to answer
-        run: scripts/wait-for-site.sh "$PRODUCTION_URL" 600
+        run: node scripts/wait-for-site.ts "$PRODUCTION_URL" 600
 
       - name: Run smoke tests against production
         env:
