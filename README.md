@@ -363,6 +363,7 @@ src/i18n/             locales, translated route map, UI strings
 src/components/       layout, SEO head, CV building blocks, shared page bodies
 src/layouts/          BaseLayout
 src/lib/              pure utilities and content queries
+src/icons/brands/     brand logos (Simple Icons, CC0) for the skills carousel
 src/pages/            English routes at the root, Spanish in es/
 src/styles/global.css design tokens, light/dark, print styles
 ```
@@ -377,3 +378,6 @@ Instructions for coding agents live in a single file, [`AGENTS.md`](AGENTS.md).
 The code is released under the [MIT License](LICENSE): use it, fork it, adapt it. The personal
 content (CV data, my name, descriptions and images) is © Andrés Molina Bustamante, all rights
 reserved; see [`CONTENT-LICENSE.md`](CONTENT-LICENSE.md) for the exact files.
+
+The brand logos in [`src/icons/brands/`](src/icons/brands) come from
+[Simple Icons](https://simpleicons.org) (CC0); the brands themselves are trademarks of their owners.
