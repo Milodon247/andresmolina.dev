@@ -12,7 +12,9 @@
     "id": "azure-security-engineer",
     "order": 2,
     "name": "Microsoft Certified: Azure Security Engineer Associate",
-    "issuer": "Microsoft"
+    "issuer": "Microsoft",
+    "expires": "2026-06",
+    "verifyUrl": "https://learn.microsoft.com/en-us/users/andresmolina-6912/credentials/fe2f25c892f2772c"
   },
   {
     "id": "azure-network-engineer",
